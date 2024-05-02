@@ -1,4 +1,5 @@
 import EventsListView from '../view/events-list-view';
+import SortingView from '../view/sorting-view.js';
 import EditingPointView from '../view/editing-point-view';
 import NewPointView from '../view/new-point-view';
 import WaypointView from '../view/waypoint-view';
@@ -12,6 +13,7 @@ export default class EventsPresenter {
   }
 
   init() {
+    render(new SortingView(),this.eventsContainer);
     render(this.eventsListComponent, this.eventsContainer);
     render(new EditingPointView(), this.eventsListComponent.getElement(), RenderPosition.AFTERBEGIN);
     render(new NewPointView(), this.eventsListComponent.getElement());

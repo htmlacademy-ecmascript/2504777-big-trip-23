@@ -1,0 +1,31 @@
+import { typesOfWaypoint, offersToWaypoints } from '../const.js';
+import { generateId, getRandomInteger } from '../utils.js';
+
+const getOffers = () =>
+  typesOfWaypoint
+    .map((type) => ({
+      type,
+      offers: offersToWaypoints[type.toLowerCase()]
+        .map((offer) => ({
+          id: generateId(),
+          title: offer,
+          price: getRandomInteger(25, 125),
+        }))
+    }));
+
+const mockOffers = getOffers();
+// console.log(mockOffers);
+
+const getOffersForWaypoint = (waypoint) => {
+  for (const offer of mockOffers) {
+    if (offer.type === waypoint) {
+      return offer.offers;
+    }
+  }
+};
+
+// console.log(getOffersForWaypoint('Ship'));
+
+export { getOffersForWaypoint };
+// console.log(getOffers());
+

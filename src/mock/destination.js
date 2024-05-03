@@ -1,13 +1,22 @@
-import { getRandomInteger, generateId, getRandomArrayElement, createArray } from '../utils.js';
-import { PICTURE_SRC, descriptionFish, cities } from '../const.js';
+import { getRandomInteger, generateId, getRandomArrayElement, createArray, getElementById } from '../utils.js';
+import { PICTURE_SRC, descriptionFish, DESTINATIONS } from '../const.js';
 
 const getPictureSrc = () => `${PICTURE_SRC}${getRandomInteger(1, 100)}`;
 
+const createPicture = () => ({
+  src: getPictureSrc(),
+  description: getRandomArrayElement(descriptionFish),
+});
+
 const getDescription = (fishData) => {
   const description = [];
-  const descriptionLength = getRandomInteger(1, 5);
+  const descriptionLength = getRandomInteger(0, 5);
   const usedSentences = [];
   let sentence;
+
+  if (descriptionLength === 0) {
+    return '';
+  }
 
   for (let i = 0; i < descriptionLength; i++) {
     do {
@@ -20,44 +29,23 @@ const getDescription = (fishData) => {
 
   return description.join('. ');
 };
-// console.log(`getDescription: ${getDescription(descriptionFish)}`);
 
-const createPicture = () => ({
-  src: getPictureSrc(),
-  description: getRandomArrayElement(descriptionFish),
+const createDestination = (destination) => ({
+  id: generateId(),
+  description: getDescription(descriptionFish),
+  name: destination,
+  pictures: createArray(getRandomInteger(0, 4), createPicture),
 });
-// console.log(createPicture());
 
-const getDestinationName = (usedName, names) => {
-  let name;
+const getDestinations = () => DESTINATIONS.map((destination) => createDestination(destination));
 
-  do {
-    name = getRandomArrayElement(names)}
-  while (usedName.includes(name));
+const mockDestinations = getDestinations();
 
-  usedName.push(name);
-  return name;
-};
-
-const createDestinationGenerator = () => {
-  const usedDestinations = [];
-
-  return () => ({
-    id: generateId(),
-    description: getDescription(descriptionFish),
-    name: getDestinationName(usedDestinations, cities),
-    pictures: createArray(getRandomInteger(0, 4), createPicture),
-  });
-};
-// console.log(createDestination());
-
-const generateDestination = createDestinationGenerator();
-
-const mockDestinations = createArray(9, generateDestination);
+console.log(mockDestinations);
 
 const getRandomDestination = () => getRandomArrayElement(mockDestinations);
 
-export { getRandomDestination };
+const getDestinationById = (id) => getElementById(id, mockDestinations);
 
-// console.log(getDestinations());
+export { getRandomDestination, getDestinationById };
 

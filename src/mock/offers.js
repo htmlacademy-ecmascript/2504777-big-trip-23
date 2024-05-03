@@ -1,8 +1,8 @@
-import { typesOfWaypoint, offersToWaypoints } from '../const.js';
+import { TYPES_OF_WAYPOINT, offersToWaypoints } from '../const.js';
 import { generateId, getRandomInteger } from '../utils.js';
 
 const getOffers = () =>
-  typesOfWaypoint
+  TYPES_OF_WAYPOINT
     .map((type) => ({
       type,
       offers: offersToWaypoints[type.toLowerCase()]
@@ -24,8 +24,5 @@ const getOffersForWaypoint = (waypoint) => {
   }
 };
 
-// console.log(getOffersForWaypoint('Ship'));
-
 export { getOffersForWaypoint };
-// console.log(getOffers());
 

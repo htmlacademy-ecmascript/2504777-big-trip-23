@@ -1,5 +1,5 @@
 import { generateId, getRandomInteger, getRandomArrayElement, flipCoin, createArray } from '../utils.js';
-import { typesOfWaypoint, dateFromList, dateToList } from '../const.js';
+import { TYPES_OF_WAYPOINT, DATE_FROM_LIST, DATE_TO_LIST } from '../const.js';
 import { getRandomDestination } from './destination.js';
 import { getOffersForWaypoint } from './offers.js';
 
@@ -12,35 +12,21 @@ const getId = (element) => {
 };
 
 const createWaypoint = () => {
-  const typeOfWaypoint = getRandomArrayElement(typesOfWaypoint);
-  // console.log(typeOfWaypoint);
+  const typeOfWaypoint = getRandomArrayElement(TYPES_OF_WAYPOINT);
   const destinationOfWaypoint = getRandomDestination();
-  // console.log(destinationOfWaypoint);
   const offersOfWaypoint = getOffersForWaypoint(typeOfWaypoint);
-  // console.log(offersOfWaypoint);
 
   return {
     id: generateId(),
     type: typeOfWaypoint,
     basePrice: getRandomInteger(200, 1000),
-    dateFrom: new Date(getRandomArrayElement(dateFromList)),
-    dateTo: new Date(getRandomArrayElement(dateToList)),
+    dateFrom: new Date(getRandomArrayElement(DATE_FROM_LIST)),
+    dateTo: new Date(getRandomArrayElement(DATE_TO_LIST)),
     destination: getId(destinationOfWaypoint),
     isFavorite: flipCoin(),
     offers: getId(offersOfWaypoint),
   };
 };
-
-// const createWaypoint = () => ({
-//   id: generateId(),
-//   type: getRandomArrayElement(typesOfWaypoint),
-//   basePrice: getRandomInteger(200, 1000),
-//   dateFrom: new Date(getRandomArrayElement(dateFromList)),
-//   dateTo: new Date(getRandomArrayElement(dateToList)),
-//   destination: '',
-//   isFavorite: flipCoin(),
-//   offers: [],
-// });
 
 const mockWaypoints = createArray(8, createWaypoint);
 // console.log(mockWaypoints);

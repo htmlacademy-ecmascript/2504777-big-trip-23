@@ -34,14 +34,14 @@ const createDestination = (destination) => ({
   id: generateId(),
   description: getDescription(descriptionFish),
   name: destination,
-  pictures: createArray(getRandomInteger(0, 4), createPicture),
+  pictures: createArray(getRandomInteger(0, 5), createPicture),
 });
 
 const getDestinations = () => DESTINATIONS.map((destination) => createDestination(destination));
 
 const mockDestinations = getDestinations();
 
-console.log(mockDestinations);
+// console.log(mockDestinations);
 
 const getRandomDestination = () => getRandomArrayElement(mockDestinations);
 

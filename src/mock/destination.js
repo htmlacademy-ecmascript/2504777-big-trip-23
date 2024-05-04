@@ -45,7 +45,7 @@ const mockDestinations = getDestinations();
 
 const getRandomDestination = () => getRandomArrayElement(mockDestinations);
 
-const getDestinationById = (id) => getElementById(id, mockDestinations);
+// const getDestinationById = (id) => getElementById(id, mockDestinations);
 
-export { getRandomDestination, getDestinationById };
+export { getRandomDestination, mockDestinations };
 

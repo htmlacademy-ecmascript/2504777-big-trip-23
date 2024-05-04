@@ -16,13 +16,13 @@ const getOffers = () =>
 const mockOffers = getOffers();
 // console.log(mockOffers);
 
-const getOffersForWaypoint = (waypoint) => {
-  for (const offer of mockOffers) {
-    if (offer.type === waypoint) {
-      return offer.offers;
-    }
-  }
-};
+// const getOffersForWaypoint = (waypoint) => {
+//   for (const offer of mockOffers) {
+//     if (offer.type === waypoint) {
+//       return offer.offers;
+//     }
+//   }
+// };
 
-export { getOffersForWaypoint };
+export { mockOffers };
 

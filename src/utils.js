@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { DATE_FORMAT } from './const';
+// import { DATE_FORMAT } from './const';
 
 const getRandomInteger = (a, b) => {
   const lower = Math.ceil(Math.min(a, b));
@@ -36,7 +36,7 @@ const createArray = (arrayLength, constructorFunction) => Array.from({length: ar
 
 const flipCoin = () => Math.random() > 0.5;
 
-const humanizeWatpointDate = (date) => dayjs(date).format(DATE_FORMAT);
+const humanizeWatpointDate = (date, format) => dayjs(date).format(format);
 
 const getElementById = (id, bearer) => {
   for (const elem of bearer) {

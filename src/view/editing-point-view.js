@@ -1,80 +1,11 @@
 import { createElement } from '../render.js';
 import { TYPES_OF_WAYPOINT, DESTINATIONS, DateFormat } from '../const.js';
-// import { getDestinationById } from '../mock/destination.js';
 import { humanizeWatpointDate } from '../utils.js';
-// import { getOffersForWaypoint } from '../mock/offers.js';
 
 const formatOfferTitle = (title) => {
   const replasedTitle = title.replace(/ /gi, '-');
   return replasedTitle.charAt(0).toLowerCase() + replasedTitle.slice(1);
 };
-
-const createEventTypeItemTemplate = (eventType, index) => `
-  <div class="event__type-item">
-    <input id="event-type-${eventType.toLowerCase()}-${index}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${eventType.toLowerCase()}">
-    <label class="event__type-label  event__type-label--${eventType.toLowerCase()}" for="event-type-${eventType.toLowerCase()}-${index}">${eventType}</label>
-  </div>
-`;
-
-const createOfferTemplate = (offer) => `
-  <div class="event__offer-selector">
-    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${formatOfferTitle(offer.title)}-${offer.id}" type="checkbox" name="event-offer-${formatOfferTitle(offer.title)}" checked>
-    <label class="event__offer-label" for="event-offer-${formatOfferTitle(offer.title)}-${offer.id}">
-      <span class="event__offer-title">${offer.title}</span>
-      &plus;&euro;&nbsp;
-      <span class="event__offer-price">${offer.price}</span>
-    </label>
-  </div>
-`;
-
-const createOfferSectionTemplate = (offers) => {
-  if (offers.length === 0) {
-    return '';
-  }
-  return `<section class="event__section  event__section--offers">
-            <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-            <div class="event__available-offers">
-
-              ${offers.map((offer) => createOfferTemplate(offer)).join('')}
-
-            </div>
-          </section>`;
-};
-
-const createPhotoTemplate = (photo) => `<img class="event__photo" src=${photo.src} alt="Event photo"></img>`;
-
-const createDestinationSectionTemplate = (destination) => {
-  if (!destination.description && destination.pictures.length === 0) {
-    return '';
-  }
-  return `<section class="event__section  event__section--destination">
-            <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-            <p class="event__destination-description">${destination.description}</p>
-
-            <div class="event__photos-container">
-              <div class="event__photos-tape">
-
-                ${destination.pictures.map((photo) => createPhotoTemplate(photo)).join('')}
-
-              </div>
-            </div>
-          </section>`;
-};
-
-const createEventDetailsTemplate = (destination, offers) => {
-  if ((!destination.description && destination.pictures.length === 0) && offers.length === 0) {
-    return '';
-  }
-  return `<section class="event__details">
-
-          ${createOfferSectionTemplate(offers)}
-          ${createDestinationSectionTemplate(destination)}
-
-        </section>`;
-};
-
-// ? формируется из значений, полученных с сервера - как связывать и взаимодействовать??
-// const createDestinationOptionTemplate = (option) => `<option value="${option}"></option>`;
 
 const createEditingPointTemplate = (waypoint, destinations, offers) => {
   const { type, dateFrom, dateTo, basePrice} = waypoint;
@@ -97,20 +28,26 @@ const createEditingPointTemplate = (waypoint, destinations, offers) => {
             <div class="event__type-list">
               <fieldset class="event__type-group">
                 <legend class="visually-hidden">Event type</legend>
-                ${TYPES_OF_WAYPOINT.map((eventType, index) => createEventTypeItemTemplate(eventType, index)).join('')}
+
+                ${TYPES_OF_WAYPOINT.map((eventType) => `
+                <div class="event__type-item">
+                  <input id="event-type-${eventType.toLowerCase()}-${waypointId}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${eventType.toLowerCase()}" ${eventType === type ? 'checked' : ''}>
+                  <label class="event__type-label  event__type-label--${eventType.toLowerCase()}" for="event-type-${eventType.toLowerCase()}-${waypointId}">${eventType}</label>
+                </div>`).join('')}
+
               </fieldset>
             </div>
           </div>
 
           <div class="event__field-group  event__field-group--destination">
-            <label class="event__label  event__type-output" for="event-destination-1">
+            <label class="event__label  event__type-output" for="event-destination-${waypointId}">
               ${type}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${currentDestination.name}" list="destination-list-1">
-            <datalist id="destination-list-1">
-              <option value="Amsterdam"></option>
-              <option value="Geneva"></option>
-              <option value="Chamonix"></option>
+            <input class="event__input  event__input--destination" id="event-destination-${waypointId}" type="text" name="event-destination" value="${currentDestination.name}" list="destination-list-${waypointId}">
+            <datalist id="destination-list-${waypointId}">
+
+              ${DESTINATIONS.map((destination) => `<option value="${destination}"></option>`).join('')}
+
             </datalist>
           </div>
 
@@ -137,7 +74,45 @@ const createEditingPointTemplate = (waypoint, destinations, offers) => {
           </button>
         </header>
 
-        ${createEventDetailsTemplate(currentDestination, offersForWaypoint)}
+
+      ${((!currentDestination.description && !currentDestination.pictures.length) && !offersForWaypoint.length === 0) ? '' : `
+        <section class="event__details">
+
+          ${offersForWaypoint.length ? `
+            <section class="event__section  event__section--offers">
+              <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+              <div class="event__available-offers">
+
+                ${offersForWaypoint.map((offer) => `
+                  <div class="event__offer-selector">
+                    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${formatOfferTitle(offer.title)}-${offer.id}" type="checkbox" name="event-offer-${formatOfferTitle(offer.title)}" checked>
+                      <label class="event__offer-label" for="event-offer-${formatOfferTitle(offer.title)}-${offer.id}">
+                        <span class="event__offer-title">${offer.title}</span>
+                        &plus;&euro;&nbsp;
+                        <span class="event__offer-price">${offer.price}</span>
+                      </label>
+                  </div>`).join('')}
+
+              </div>
+            </section>
+          ` : ''}
+
+          ${!currentDestination.description && !currentDestination.pictures.length ? '' : `
+            <section class="event__section  event__section--destination">
+              <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+              <p class="event__destination-description">${currentDestination.description}</p>
+
+              <div class="event__photos-container">
+                <div class="event__photos-tape">
+
+                  ${currentDestination.pictures.map((photo) => `<img class="event__photo" src=${photo.src} alt="Event photo"></img>`).join('')}
+
+                </div>
+              </div>
+            </section>`}
+
+        </section>
+      `}
 
       </form>
     </li>`

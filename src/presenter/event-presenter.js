@@ -25,8 +25,8 @@ export default class EventPresenter {
     render(new EditingPointView({waypoint: this.eventWaypoints[0], destinations, offers}), this.eventListComponent.getElement(), RenderPosition.AFTERBEGIN);
     // render(new NewPointView({waypoint: this.eventWaypoints[1]}), this.eventListComponent.getElement());
 
-    // for (let i = 1; i < this.eventWaypoints.length; i++) {
-    //   render(new WaypointView({waypoint: this.eventWaypoints[i], destinations, offers}), this.eventListComponent.getElement());
-    // }
+    for (let i = 1; i < this.eventWaypoints.length; i++) {
+      render(new WaypointView({waypoint: this.eventWaypoints[i], destinations, offers}), this.eventListComponent.getElement());
+    }
   }
 }

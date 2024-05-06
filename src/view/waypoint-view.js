@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import { createElement } from '../render.js';
 import { humanizeWatpointDate } from '../utils.js';
-import { DateFormat, TimeAbbreviations } from '../const.js';
+import { DateFormat, TimeAbbreviations, NEW_POINT } from '../const.js';
 
 const {FOR_ATRIBUTE, DAY, TIME} = DateFormat;
 const {MINUTES, HOURS, DAYS} = TimeAbbreviations;
@@ -29,27 +29,26 @@ const renderDuration = ({minutes, hours, days}) => {
   }
 };
 
-const createOffersTemplate = (offers) => {
-  if (offers.length > 0) {
-    return `
-      <h4 class="visually-hidden">Offers:</h4>
-      <ul class="event__selected-offers">
-        ${offers.map((offer) => `
-          <li class="event__offer">
-            <span class="event__offer-title">${offer.title}</span>
-            &plus;&euro;&nbsp;
-            <span class="event__offer-price">${offer.price}</span>
-          </li>`).join('')}
-      </ul>`;
-  }
-  return '';
-};
+// const createOffersTemplate = (offers) => {
+//   if (offers.length > 0) {
+//     return `
+//       <h4 class="visually-hidden">Offers:</h4>
+//       <ul class="event__selected-offers">
+//         ${offers.map((offer) => `
+//           <li class="event__offer">
+//             <span class="event__offer-title">${offer.title}</span>
+//             &plus;&euro;&nbsp;
+//             <span class="event__offer-price">${offer.price}</span>
+//           </li>`).join('')}
+//       </ul>`;
+//   }
+//   return '';
+// };
 
 function createWaypointTemplate(waypoint, destinations, offers) {
   const {type, dateFrom, dateTo, basePrice, isFavorite} = waypoint;
   const currentDestination = destinations.find((destination) => destination.id === waypoint.destination);
   const offersForWaypoint = offers.find((pointOffers) => pointOffers.type === waypoint.type).offers;
-  const waypointId = waypoint.id || 0;
 
   const waypointFavoriteClassName = isFavorite ? 'event__favorite-btn--active' : '';
   const eventDuration = dayjs(dateTo).diff(dayjs(dateFrom));
@@ -74,7 +73,18 @@ function createWaypointTemplate(waypoint, destinations, offers) {
           &euro;&nbsp;<span class="event__price-value">${basePrice}</span>
         </p>
 
-        ${createOffersTemplate(offersForWaypoint)}
+        ${offersForWaypoint.length ? `
+          <h4 class="visually-hidden">Offers:</h4>
+          <ul class="event__selected-offers">
+            ${offersForWaypoint.map((offer) => waypoint.offers.includes(offer.id) ? `
+              <li class="event__offer">
+                <span class="event__offer-title">${offer.title}</span>
+                &plus;&euro;&nbsp;
+                <span class="event__offer-price">${offer.price}</span>
+              </li>
+            ` : '').join('')}
+          </ul>
+        ` : ''}
 
         <button class="event__favorite-btn ${waypointFavoriteClassName}" type="button">
           <span class="visually-hidden">Add to favorite</span>

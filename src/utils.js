@@ -46,4 +46,31 @@ const getElementById = (id, bearer) => {
   }
 };
 
-export { getRandomInteger, generateId, getRandomArrayElement, createArray, flipCoin, humanizeWatpointDate, getElementById };
+const getRandomNumberOfRandomElements = (data, from, to) => {
+  const result = [];
+  const resultLength = getRandomInteger(from, to);
+  // console.log(resultLength);
+  const usedvalue = [];
+  let value;
+
+  if (resultLength === 0 || data.length === 0) {
+    return [];
+  }
+
+  for (let i = 0; i < resultLength; i++) {
+    if (data.length < resultLength) {
+      return result;
+    }
+
+    do {
+      value = getRandomArrayElement(data);
+    } while (usedvalue.includes(value));
+
+    result.push(value);
+    usedvalue.push(value);
+  }
+  // console.log(result);
+  return result;
+};
+
+export { getRandomInteger, generateId, getRandomArrayElement, createArray, flipCoin, humanizeWatpointDate, getElementById, getRandomNumberOfRandomElements };

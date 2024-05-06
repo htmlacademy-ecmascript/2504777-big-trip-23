@@ -13,7 +13,6 @@ const createEditingPointTemplate = (waypoint, destinations, offers) => {
   const offersForWaypoint = offers.find((pointOffers) => pointOffers.type === waypoint.type).offers;
   const waypointId = waypoint.id || 0;
 
-
   return (
     `<li class="trip-events__item">
       <form class="event event--edit" action="#" method="post">
@@ -43,7 +42,7 @@ const createEditingPointTemplate = (waypoint, destinations, offers) => {
             <label class="event__label  event__type-output" for="event-destination-${waypointId}">
               ${type}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-${waypointId}" type="text" name="event-destination" value="${currentDestination.name}" list="destination-list-${waypointId}">
+            <input class="event__input  event__input--destination" id="event-destination-${waypointId}" type="text" name="event-destination" value="${waypointId ? currentDestination.name : ''}" list="destination-list-${waypointId}">
             <datalist id="destination-list-${waypointId}">
 
               ${DESTINATIONS.map((destination) => `<option value="${destination}"></option>`).join('')}
@@ -68,10 +67,12 @@ const createEditingPointTemplate = (waypoint, destinations, offers) => {
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">Delete</button>
+          <button class="event__reset-btn" type="reset">${waypointId ? 'Delete' : 'Cancel' }</button>
+          ${waypointId ? `
           <button class="event__rollup-btn" type="button">
             <span class="visually-hidden">Open event</span>
-          </button>
+          </button>` : '' }
+
         </header>
 
 
@@ -85,7 +86,7 @@ const createEditingPointTemplate = (waypoint, destinations, offers) => {
 
                 ${offersForWaypoint.map((offer) => `
                   <div class="event__offer-selector">
-                    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${formatOfferTitle(offer.title)}-${offer.id}" type="checkbox" name="event-offer-${formatOfferTitle(offer.title)}" checked>
+                    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${formatOfferTitle(offer.title)}-${offer.id}" type="checkbox" name="event-offer-${formatOfferTitle(offer.title)}" ${waypoint.offers.includes(offer.id) ? 'checked' : ''}>
                       <label class="event__offer-label" for="event-offer-${formatOfferTitle(offer.title)}-${offer.id}">
                         <span class="event__offer-title">${offer.title}</span>
                         &plus;&euro;&nbsp;
@@ -120,7 +121,7 @@ const createEditingPointTemplate = (waypoint, destinations, offers) => {
 };
 
 export default class EditingPointView {
-  constructor({waypoint, destinations, offers}) {
+  constructor({waypoint, destinations, offers}) { // Добавь waypoint = NEW_POINT
     this.waypoint = waypoint;
     this.destinations = destinations;
     this.offers = offers;

@@ -10,7 +10,7 @@ const createPicture = () => ({
 
 const createDestination = (destination) => ({
   id: generateId(),
-  description: getRandomNumberOfRandomElements(descriptionFish, 0, 5).join('. '),
+  description: getRandomNumberOfRandomElements(descriptionFish, 1, 5).join('. '),
   name: destination,
   pictures: createArray(getRandomInteger(0, 5), createPicture),
 });

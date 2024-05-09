@@ -5,7 +5,7 @@ const getOffers = () =>
   TYPES_OF_WAYPOINT
     .map((type) => ({
       type,
-      offers: offersToWaypoints[type.toLowerCase()]
+      offers: offersToWaypoints[type]
         .map((offer) => ({
           id: generateId(),
           title: offer,

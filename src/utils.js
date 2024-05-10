@@ -73,4 +73,6 @@ const getRandomNumberOfRandomElements = (data, from, to) => {
   return result;
 };
 
-export { getRandomInteger, generateId, getRandomArrayElement, createArray, flipCoin, humanizeWatpointDate, getElementById, getRandomNumberOfRandomElements };
+const isEscapeKey = (evt) => evt.key === 'Escape';
+
+export { getRandomInteger, generateId, getRandomArrayElement, createArray, flipCoin, humanizeWatpointDate, getElementById, getRandomNumberOfRandomElements, isEscapeKey };

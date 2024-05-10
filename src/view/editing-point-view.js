@@ -77,7 +77,7 @@ const createEditingPointTemplate = (waypoint, destinations, offers) => {
 
         </header>
 
-      ${(!currentDestination && !offersForWaypoint.length) ? '' : `
+        ${(!currentDestination && !offersForWaypoint.length) ? '' : `
         <section class="event__details">
 
           ${offersForWaypoint.length ? `
@@ -125,15 +125,36 @@ export default class EditingPointView extends AbstractView {
   #waypoint = null;
   #destinations = null;
   #offers = null;
+  #handleFormSubmit = null;
+  #handleFormReset = null;
 
-  constructor({waypoint = NEW_POINT, destinations, offers}) {
+  constructor({waypoint = NEW_POINT, destinations, offers, onFormSubmit, onFormReset}) {
     super();
     this.#waypoint = waypoint;
     this.#destinations = destinations;
     this.#offers = offers;
+    this.#handleFormSubmit = onFormSubmit;
+    this.#handleFormReset = onFormReset;
+
+    this.element.querySelector('.event--edit')
+      .addEventListener('submit', this.#formSubmitHandler);
+    this.element.querySelector('.event__rollup-btn')
+      .addEventListener('click', this.#formResetHandler);
+    this.element.querySelector('.event__reset-btn')
+      .addEventListener('click', this.#formResetHandler);
   }
 
   get template() {
     return createEditingPointTemplate(this.#waypoint, this.#destinations, this.#offers);
   }
+
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormSubmit();
+  };
+
+  #formResetHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormReset();
+  };
 }

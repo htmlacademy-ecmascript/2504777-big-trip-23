@@ -2,7 +2,8 @@ import EventListView from '../view/event-list-view.js';
 import SortingView from '../view/sorting-view.js';
 import EditingPointView from '../view/editing-point-view.js';
 import WaypointView from '../view/waypoint-view.js';
-import { render, RenderPosition } from '../framework/render.js';
+import { render, replace } from '../framework/render.js';
+import { isEscapeKey } from '../utils.js';
 
 export default class EventPresenter {
   #eventContainer = null;
@@ -26,10 +27,53 @@ export default class EventPresenter {
 
     render(new SortingView(), this.#eventContainer);
     render(this.#eventListComponent, this.#eventContainer);
-    render(new EditingPointView({waypoint: this.#eventWaypoints[0], destinations: this.#destinations, offers: this.#offers}), this.#eventListComponent.element, RenderPosition.AFTERBEGIN);
 
-    for (let i = 1; i < this.#eventWaypoints.length; i++) {
-      render(new WaypointView({waypoint: this.#eventWaypoints[i], destinations: this.#destinations, offers: this.#offers}), this.#eventListComponent.element);
+    for (let i = 0; i < this.#eventWaypoints.length; i++) {
+      this.#renderWaypoint(this.#eventWaypoints[i], this.#destinations, this.#offers);
     }
+  }
+
+  #renderWaypoint(waypoint, destinations, offers) {
+
+    const onDocumentEscKeydown = (evt) => {
+      if (isEscapeKey(evt)) {
+        evt.preventDefault();
+        switchToViewMode();
+      }
+    };
+
+    const waypointComponent = new WaypointView({
+      waypoint,
+      destinations,
+      offers,
+      onEditClick() {
+        switchToEditMode();
+      }
+    });
+
+    const waypointEditComponent = new EditingPointView({
+      waypoint,
+      destinations,
+      offers,
+      onFormSubmit() {
+        switchToViewMode();
+      },
+      onFormReset() {
+        switchToViewMode();
+      }
+
+    });
+
+    function switchToEditMode() {
+      replace(waypointEditComponent, waypointComponent);
+      document.addEventListener('keydown', onDocumentEscKeydown);
+    }
+
+    function switchToViewMode() {
+      replace(waypointComponent, waypointEditComponent);
+      document.removeEventListener('keydown', onDocumentEscKeydown);
+    }
+
+    render(waypointComponent, this.#eventListComponent.element);
   }
 }

@@ -1,5 +1,5 @@
-import { createElement } from '../render.js';
-import { TYPES_OF_WAYPOINT, DateFormat } from '../const.js';
+import AbstractView from '../framework/view/abstract-view.js';
+import { TYPES_OF_WAYPOINT, DateFormat, NEW_POINT } from '../const.js';
 import { humanizeWatpointDate } from '../utils.js';
 
 const formatOfferTitle = (title) => {
@@ -77,7 +77,7 @@ const createEditingPointTemplate = (waypoint, destinations, offers) => {
 
         </header>
 
-      ${(!currentDestination && !offersForWaypoint.length) ? '' : `
+        ${(!currentDestination && !offersForWaypoint.length) ? '' : `
         <section class="event__details">
 
           ${offersForWaypoint.length ? `
@@ -121,26 +121,42 @@ const createEditingPointTemplate = (waypoint, destinations, offers) => {
   );
 };
 
-export default class EditingPointView {
-  constructor({waypoint, destinations, offers}) { // Добавь waypoint = NEW_POINT
-    this.waypoint = waypoint;
-    this.destinations = destinations;
-    this.offers = offers;
+export default class EditingPointView extends AbstractView {
+  #waypoint = null;
+  #destinations = null;
+  #offers = null;
+  #handleFormSubmit = null;
+  #handleFormReset = null;
+  #editForm = null;
+
+  constructor({waypoint = NEW_POINT, destinations, offers, onFormSubmit, onFormReset}) {
+    super();
+    this.#waypoint = waypoint;
+    this.#destinations = destinations;
+    this.#offers = offers;
+    this.#handleFormSubmit = onFormSubmit;
+    this.#handleFormReset = onFormReset;
+    this.#editForm = this.element.querySelector('.event--edit');
+
+    this.#editForm
+      .addEventListener('submit', this.#formSubmitHandler);
+    this.#editForm
+      .addEventListener('reset', this.#formResetHandler);
+    this.element.querySelector('.event__rollup-btn')
+      .addEventListener('click', this.#formResetHandler);
   }
 
-  getTemplate() {
-    return createEditingPointTemplate(this.waypoint, this.destinations, this.offers);
+  get template() {
+    return createEditingPointTemplate(this.#waypoint, this.#destinations, this.#offers);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormSubmit();
+  };
 
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
-  }
+  #formResetHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormReset();
+  };
 }

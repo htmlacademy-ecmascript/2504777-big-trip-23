@@ -5,20 +5,19 @@ import { mockDestinations } from '../mock/destination.js';
 import { mockOffers } from '../mock/offers.js';
 
 export default class WaypointsModel {
-  waypoints = createArray(WAYPOINTS_COUNT, getRandomWaypoint);
-  destinations = mockDestinations;
-  offers = mockOffers;
+  #waypoints = createArray(WAYPOINTS_COUNT, getRandomWaypoint);
+  #destinations = mockDestinations;
+  #offers = mockOffers;
 
-  getWaypoints() {
-    return this.waypoints;
+  get waypoints() {
+    return this.#waypoints;
   }
 
-  getDestinations() {
-    return this.destinations;
+  get destinations() {
+    return this.#destinations;
   }
 
-  getOffers() {
-    return this.offers;
+  get offers() {
+    return this.#offers;
   }
-
 }

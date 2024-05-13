@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import { humanizeWatpointDate } from '../utils.js';
 import { DateFormat, TimeAbbreviations } from '../const.js';
 
@@ -29,7 +29,7 @@ const renderDuration = ({minutes, hours, days}) => {
   }
 };
 
-function createWaypointTemplate(waypoint, destinations, offers) {
+const createWaypointTemplate = (waypoint, destinations, offers) => {
   const {type, dateFrom, dateTo, basePrice, isFavorite} = waypoint;
   const currentDestination = destinations.find((destination) => destination.id === waypoint.destination);
   const offersForWaypoint = offers.find((pointOffers) => pointOffers.type === waypoint.type).offers;
@@ -82,28 +82,31 @@ function createWaypointTemplate(waypoint, destinations, offers) {
         </button>
       </div>
     </li>`);
-}
+};
 
-export default class WaypointView {
-  constructor({waypoint, destinations, offers}) {
-    this.waypoint = waypoint;
-    this.destinations = destinations;
-    this.offers = offers;
+export default class WaypointView extends AbstractView {
+  #waypoint = null;
+  #destinations = null;
+  #offers = null;
+  #handleEditClick = null;
+
+  constructor({waypoint, destinations, offers, onEditClick}) {
+    super();
+    this.#waypoint = waypoint;
+    this.#destinations = destinations;
+    this.#offers = offers;
+    this.#handleEditClick = onEditClick;
+
+    this.element.querySelector('.event__rollup-btn')
+      .addEventListener('click', this.#editClickHandler);
   }
 
-  getTemplate() {
-    return createWaypointTemplate(this.waypoint, this.destinations, this.offers);
+  get template() {
+    return createWaypointTemplate(this.#waypoint, this.#destinations, this.#offers);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
-  }
+  #editClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleEditClick();
+  };
 }

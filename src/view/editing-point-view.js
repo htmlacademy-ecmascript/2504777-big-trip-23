@@ -127,6 +127,7 @@ export default class EditingPointView extends AbstractView {
   #offers = null;
   #handleFormSubmit = null;
   #handleFormReset = null;
+  #editForm = null;
 
   constructor({waypoint = NEW_POINT, destinations, offers, onFormSubmit, onFormReset}) {
     super();
@@ -135,12 +136,13 @@ export default class EditingPointView extends AbstractView {
     this.#offers = offers;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleFormReset = onFormReset;
+    this.#editForm = this.element.querySelector('.event--edit');
 
-    this.element.querySelector('.event--edit')
+    this.#editForm
       .addEventListener('submit', this.#formSubmitHandler);
+    this.#editForm
+      .addEventListener('reset', this.#formResetHandler);
     this.element.querySelector('.event__rollup-btn')
-      .addEventListener('click', this.#formResetHandler);
-    this.element.querySelector('.event__reset-btn')
       .addEventListener('click', this.#formResetHandler);
   }
 

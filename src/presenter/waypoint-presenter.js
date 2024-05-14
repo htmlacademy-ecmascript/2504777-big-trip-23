@@ -1,4 +1,4 @@
-import { render, replace } from '../framework/render';
+import { render, replace, remove } from '../framework/render';
 import { isEscapeKey } from '../utils.js';
 import EditingPointView from '../view/editing-point-view.js';
 import WaypointView from '../view/waypoint-view.js';
@@ -22,6 +22,9 @@ export default class WaypointPresenter {
     this.#destinations = destinations;
     this.#offers = offers;
 
+    const prevWaypointComponent = this.#waypointComponent;
+    const prevWaypointEditComponent = this.#waypointEditComponent;
+
     this.#waypointComponent = new WaypointView({
       waypoint: this.#waypoint,
       destinations: this.#destinations,
@@ -37,7 +40,27 @@ export default class WaypointPresenter {
       onFormReset: this.#handleFormReset,
     });
 
-    render(this.#waypointComponent, this.#waypointListContainer);
+    if (prevWaypointComponent === null || prevWaypointEditComponent === null) {
+      render(this.#waypointComponent, this.#waypointListContainer);
+      return;
+    }
+
+    if (this.#waypointListContainer.contains(prevWaypointComponent.element)) {
+      replace(this.#waypointComponent, prevWaypointComponent);
+    }
+
+    if (this.#waypointListContainer.contains(prevWaypointEditComponent.element)) {
+      replace(this.#waypointEditComponent, prevWaypointEditComponent);
+    }
+
+    remove(prevWaypointComponent);
+    remove(prevWaypointEditComponent);
+
+  }
+
+  destroy() {
+    remove(this.#waypointComponent);
+    remove(this.#waypointEditComponent);
   }
 
   #onDocumentEscKeydown = (evt) => {

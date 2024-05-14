@@ -1,9 +1,7 @@
+import { render } from '../framework/render.js';
 import EventListView from '../view/event-list-view.js';
 import SortingView from '../view/sorting-view.js';
-import EditingPointView from '../view/editing-point-view.js';
-import WaypointView from '../view/waypoint-view.js';
-import { render, replace } from '../framework/render.js';
-import { isEscapeKey } from '../utils.js';
+import WaypointPresenter from './waypoint-presenter.js';
 
 export default class EventPresenter {
   #eventContainer = null;
@@ -33,47 +31,10 @@ export default class EventPresenter {
     }
   }
 
-  #renderWaypoint(waypoint, destinations, offers) {
-
-    const onDocumentEscKeydown = (evt) => {
-      if (isEscapeKey(evt)) {
-        evt.preventDefault();
-        switchToViewMode();
-      }
-    };
-
-    const waypointComponent = new WaypointView({
-      waypoint,
-      destinations,
-      offers,
-      onEditClick() {
-        switchToEditMode();
-      }
-    });
-
-    const waypointEditComponent = new EditingPointView({
-      waypoint,
-      destinations,
-      offers,
-      onFormSubmit() {
-        switchToViewMode();
-      },
-      onFormReset() {
-        switchToViewMode();
-      }
-
-    });
-
-    function switchToEditMode() {
-      replace(waypointEditComponent, waypointComponent);
-      document.addEventListener('keydown', onDocumentEscKeydown);
-    }
-
-    function switchToViewMode() {
-      replace(waypointComponent, waypointEditComponent);
-      document.removeEventListener('keydown', onDocumentEscKeydown);
-    }
-
-    render(waypointComponent, this.#eventListComponent.element);
+  #renderWaypoint(waypoint, destination, offers) {
+    const waypointPresenter = new WaypointPresenter(
+      this.#eventListComponent.element,
+    );
+    waypointPresenter.init(waypoint, destination, offers);
   }
 }

@@ -38,13 +38,17 @@ export default class EventPresenter {
     this.#waypointPresenters.get(updatedWaypoint.id).init(updatedWaypoint, this.#destinations, this.#offers);
   };
 
+  #handleModeChange = () => {
+    this.#waypointPresenters.forEach((presenter) => presenter.modeReset());
+  };
+
   #renderWaypoint(waypoint, destination, offers) {
     const waypointPresenter = new WaypointPresenter(
       this.#eventListComponent.element,
       this.#handleWaypointChange,
+      this.#handleModeChange,
     );
     waypointPresenter.init(waypoint, destination, offers);
     this.#waypointPresenters.set(waypoint.id, waypointPresenter);
   }
-
 }

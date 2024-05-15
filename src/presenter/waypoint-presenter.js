@@ -3,20 +3,29 @@ import { isEscapeKey } from '../utils.js';
 import EditingPointView from '../view/editing-point-view.js';
 import WaypointView from '../view/waypoint-view.js';
 
+
+const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING',
+};
 export default class WaypointPresenter {
   #waypointListContainer = null;
   #handleWaypointChange = null;
+  #handleModeChange = null;
+
   #waypointComponent = null;
   #waypointEditComponent = null;
+
   #waypoint = null;
+  #destinations = null;
+  #offers = null;
 
-  #destinations = [];
-  #offers = [];
+  #mode = Mode.DEFAULT;
 
-
-  constructor(waypointListContainer, onWaypointChange) {
+  constructor(waypointListContainer, onWaypointChange, onModeChange) {
     this.#waypointListContainer = waypointListContainer;
     this.#handleWaypointChange = onWaypointChange;
+    this.#handleModeChange = onModeChange;
   }
 
   init(waypoint, destinations, offers) {
@@ -48,11 +57,11 @@ export default class WaypointPresenter {
       return;
     }
 
-    if (this.#waypointListContainer.contains(prevWaypointComponent.element)) {
+    if (this.#mode === Mode.DEFAULT) {
       replace(this.#waypointComponent, prevWaypointComponent);
     }
 
-    if (this.#waypointListContainer.contains(prevWaypointEditComponent.element)) {
+    if (this.#mode === Mode.EDITING) {
       replace(this.#waypointEditComponent, prevWaypointEditComponent);
     }
 
@@ -66,33 +75,42 @@ export default class WaypointPresenter {
     remove(this.#waypointEditComponent);
   }
 
+  modeReset() {
+    if (this.#mode !== 'DEFAULT') {
+      this.#switchToDefaultMode();
+    }
+  }
+
   #onDocumentEscKeydown = (evt) => {
     if (isEscapeKey(evt)) {
       evt.preventDefault();
-      this.#switchToViewMode();
+      this.#switchToDefaultMode();
     }
   };
 
-  #switchToEditMode() {
+  #switchToEditingMode() {
+    this.#handleModeChange();
     replace(this.#waypointEditComponent, this.#waypointComponent);
     document.addEventListener('keydown', this.#onDocumentEscKeydown);
+    this.#mode = Mode.EDITING;
   }
 
-  #switchToViewMode() {
+  #switchToDefaultMode() {
     replace(this.#waypointComponent, this.#waypointEditComponent);
     document.removeEventListener('keydown', this.#onDocumentEscKeydown);
+    this.#mode = Mode.DEFAULT;
   }
 
   #handleEditClick = () => {
-    this.#switchToEditMode();
+    this.#switchToEditingMode();
   };
 
   #handleFormSubmit = () => {
-    this.#switchToViewMode();
+    this.#switchToDefaultMode();
   };
 
   #handleFormReset = () => {
-    this.#switchToViewMode();
+    this.#switchToDefaultMode();
   };
 
   #handleFavoriteClick = () => {

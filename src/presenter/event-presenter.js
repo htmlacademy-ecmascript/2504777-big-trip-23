@@ -13,6 +13,8 @@ export default class EventPresenter {
   #destinations = [];
   #offers = [];
 
+  #waypointPresenters = new Map();
+
   constructor({eventContainer, waypointsModel}) {
     this.#eventContainer = eventContainer;
     this.#waypointsModel = waypointsModel;
@@ -36,5 +38,6 @@ export default class EventPresenter {
       this.#eventListComponent.element,
     );
     waypointPresenter.init(waypoint, destination, offers);
+    this.#waypointPresenters.set(waypoint.id, waypointPresenter);
   }
 }

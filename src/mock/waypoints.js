@@ -23,7 +23,6 @@ const createWaypoint = () => {
 };
 
 const mockWaypoints = createArray(8, createWaypoint);
+// const getRandomWaypoint = () => getRandomArrayElement(mockWaypoints);
 
-const getRandomWaypoint = () => getRandomArrayElement(mockWaypoints);
-
-export { getRandomWaypoint };
+export { mockWaypoints };

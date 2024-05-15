@@ -5,6 +5,7 @@ import WaypointView from '../view/waypoint-view.js';
 
 export default class WaypointPresenter {
   #waypointListContainer = null;
+  #handleWaypointChange = null;
   #waypointComponent = null;
   #waypointEditComponent = null;
   #waypoint = null;
@@ -13,8 +14,9 @@ export default class WaypointPresenter {
   #offers = [];
 
 
-  constructor(waypointListContainer) {
+  constructor(waypointListContainer, onWaypointChange) {
     this.#waypointListContainer = waypointListContainer;
+    this.#handleWaypointChange = onWaypointChange;
   }
 
   init(waypoint, destinations, offers) {
@@ -30,6 +32,7 @@ export default class WaypointPresenter {
       destinations: this.#destinations,
       offers: this.#offers,
       onEditClick: this.#handleEditClick,
+      onFavoriteClick: this.#handleFavoriteClick,
     });
 
     this.#waypointEditComponent = new EditingPointView({
@@ -90,6 +93,11 @@ export default class WaypointPresenter {
 
   #handleFormReset = () => {
     this.#switchToViewMode();
+  };
+
+  #handleFavoriteClick = () => {
+    this.#waypoint.isFavorite = !this.#waypoint.isFavorite;
+    this.#handleWaypointChange(this.#waypoint);
   };
 }
 

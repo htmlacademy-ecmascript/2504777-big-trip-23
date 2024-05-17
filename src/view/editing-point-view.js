@@ -1,6 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { TYPES_OF_WAYPOINT, DateFormat, NEW_POINT } from '../const.js';
-import { humanizeWatpointDate } from '../utils.js';
+import { humanizeWaypointDate } from '../utils/waypoint.js';
 
 const formatOfferTitle = (title) => {
   const replasedTitle = title.replace(/ /gi, '-');
@@ -54,10 +54,10 @@ const createEditingPointTemplate = (waypoint, destinations, offers) => {
 
           <div class="event__field-group  event__field-group--time">
             <label class="visually-hidden" for="event-start-time-1">From</label>
-            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${humanizeWatpointDate(dateFrom, DateFormat.FULL)}">
+            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${humanizeWaypointDate(dateFrom, DateFormat.FULL)}">
             &mdash;
             <label class="visually-hidden" for="event-end-time-1">To</label>
-            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${humanizeWatpointDate(dateTo, DateFormat.FULL)}">
+            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${humanizeWaypointDate(dateTo, DateFormat.FULL)}">
           </div>
 
           <div class="event__field-group  event__field-group--price">

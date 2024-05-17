@@ -2,6 +2,7 @@ import { render } from '../framework/render.js';
 import EventListView from '../view/event-list-view.js';
 import SortingView from '../view/sorting-view.js';
 import WaypointPresenter from './waypoint-presenter.js';
+import ListEmptyView from '../view/list-empty-view.js';
 
 export default class EventPresenter {
   #eventContainer = null;
@@ -25,12 +26,7 @@ export default class EventPresenter {
     this.#destinations = [...this.#waypointsModel.destinations];
     this.#offers = [...this.#waypointsModel.offers];
 
-    render(new SortingView(), this.#eventContainer);
-    render(this.#eventListComponent, this.#eventContainer);
-
-    for (let i = 0; i < this.#eventWaypoints.length; i++) {
-      this.#renderWaypoint(this.#eventWaypoints[i], this.#destinations, this.#offers);
-    }
+    this.#renderEventsBoard();
   }
 
   #handleWaypointChange = (updatedWaypoint) => {
@@ -50,5 +46,19 @@ export default class EventPresenter {
     );
     waypointPresenter.init(waypoint, destination, offers);
     this.#waypointPresenters.set(waypoint.id, waypointPresenter);
+  }
+
+  #renderEventsBoard() {
+    if (!this.#eventWaypoints.length) {
+      render(new ListEmptyView(), this.#eventContainer);
+      return;
+    }
+
+    render(new SortingView(), this.#eventContainer);
+    render(this.#eventListComponent, this.#eventContainer);
+
+    for (let i = 0; i < this.#eventWaypoints.length; i++) {
+      this.#renderWaypoint(this.#eventWaypoints[i], this.#destinations, this.#offers);
+    }
   }
 }

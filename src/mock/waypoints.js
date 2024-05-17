@@ -1,4 +1,4 @@
-import { generateId, getRandomInteger, getRandomArrayElement, flipCoin, createArray, getRandomNumberOfRandomElements } from '../utils.js';
+import { generateId, getRandomInteger, getRandomArrayElement, flipCoin, createArray, getRandomNumberOfRandomElements } from '../utils/common.js';
 import { TYPES_OF_WAYPOINT, DATE_FROM_LIST, DATE_TO_LIST } from '../const.js';
 import { getRandomDestination } from './destination.js';
 import { getOffersForWaypoint } from './offers.js';

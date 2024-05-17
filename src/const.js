@@ -5,6 +5,7 @@ const TYPES_OF_WAYPOINT = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'c
 const DESTINATIONS = ['Podgorica', 'London', 'Istanbul', 'Saint Petersburg', 'Berlin', 'Belgrade', 'Rome', 'Kyiv', 'Sofia'];
 const DATE_FROM_LIST = ['May 10, 2024 10:25:00', 'May 10, 2024 09:40:00', 'May 10, 2024 06:40:00', 'May 10, 2024 03:05:00', 'May 10, 2024 10:30:00'];
 const DATE_TO_LIST = ['May 10, 2024 10:55:00', 'May 11, 2024 14:00:00', 'May 10, 2024 11:05:00', 'May 10, 2024 15:10:00', 'May 10, 2024 11:30:00'];
+
 const NEW_POINT = {
   basePrice: 0,
   dateFrom: new Date(),
@@ -14,6 +15,7 @@ const NEW_POINT = {
   offers: [],
   type: 'Flight',
 };
+
 const DateFormat = {
   FULL: 'DD/MM/YY HH:mm',
   ATTRIBUTE_WITH_TIME: 'YYYY-MM-DD HH:mm',
@@ -21,6 +23,7 @@ const DateFormat = {
   DAY: 'MMM DD',
   TIME: 'HH:mm',
 };
+
 const TimeAbbreviations = {
   MINUTES: 'M',
   HOURS: 'H',
@@ -41,5 +44,12 @@ const offersToWaypoints = { // ? Явно именование не соотве
   'restaurant': [],
 };
 
-export { descriptionFish, PICTURE_SRC, DESTINATIONS, TYPES_OF_WAYPOINT, offersToWaypoints, WAYPOINTS_COUNT, DATE_FROM_LIST, DATE_TO_LIST, DateFormat, TimeAbbreviations, NEW_POINT };
+const Filters = {
+  EVERTHING: 'Click New Event to create your first point',
+  PAST: 'There are no past events now',
+  PRESENT: 'There are no present events now',
+  FUTURE: 'There are no future events now',
+};
+
+export { descriptionFish, PICTURE_SRC, DESTINATIONS, TYPES_OF_WAYPOINT, offersToWaypoints, WAYPOINTS_COUNT, DATE_FROM_LIST, DATE_TO_LIST, DateFormat, TimeAbbreviations, NEW_POINT, Filters };
 

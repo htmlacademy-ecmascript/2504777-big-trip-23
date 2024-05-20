@@ -1,4 +1,4 @@
-import { getRandomInteger, generateId, getRandomArrayElement, createArray, getRandomNumberOfRandomElements } from '../utils.js';
+import { getRandomInteger, generateId, getRandomArrayElement, createArray, getRandomNumberOfRandomElements } from '../utils/common.js';
 import { PICTURE_SRC, descriptionFish, DESTINATIONS } from '../const.js';
 
 const getPictureSrc = () => `${PICTURE_SRC}${getRandomInteger(1, 100)}`;

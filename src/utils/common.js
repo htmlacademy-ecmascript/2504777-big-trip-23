@@ -1,6 +1,3 @@
-import dayjs from 'dayjs';
-// import { DATE_FORMAT } from './const';
-
 const getRandomInteger = (a, b) => {
   const lower = Math.ceil(Math.min(a, b));
   const upper = Math.floor(Math.max(a, b));
@@ -36,8 +33,6 @@ const createArray = (arrayLength, constructorFunction) => Array.from({length: ar
 
 const flipCoin = () => Math.random() > 0.5;
 
-const humanizeWatpointDate = (date, format) => dayjs(date).format(format);
-
 const getElementById = (id, bearer) => {
   for (const elem of bearer) {
     if (elem.id === id) {
@@ -49,7 +44,6 @@ const getElementById = (id, bearer) => {
 const getRandomNumberOfRandomElements = (data, from, to) => {
   const result = [];
   const resultLength = getRandomInteger(from, to);
-  // console.log(resultLength);
   const usedvalue = [];
   let value;
 
@@ -69,10 +63,9 @@ const getRandomNumberOfRandomElements = (data, from, to) => {
     result.push(value);
     usedvalue.push(value);
   }
-  // console.log(result);
   return result;
 };
 
 const isEscapeKey = (evt) => evt.key === 'Escape';
 
-export { getRandomInteger, generateId, getRandomArrayElement, createArray, flipCoin, humanizeWatpointDate, getElementById, getRandomNumberOfRandomElements, isEscapeKey };
+export { getRandomInteger, generateId, getRandomArrayElement, createArray, flipCoin, getElementById, getRandomNumberOfRandomElements, isEscapeKey };

@@ -1,5 +1,5 @@
 import { TYPES_OF_WAYPOINT, offersToWaypoints } from '../const.js';
-import { generateId, getRandomInteger } from '../utils.js';
+import { generateId, getRandomInteger } from '../utils/common.js';
 
 const getOffers = () =>
   TYPES_OF_WAYPOINT

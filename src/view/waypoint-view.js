@@ -1,36 +1,14 @@
 import dayjs from 'dayjs';
+
 import AbstractView from '../framework/view/abstract-view.js';
-import { humanizeWatpointDate } from '../utils.js';
-import { DateFormat, TimeAbbreviations } from '../const.js';
 
-const {ATTRIBUTE_WITH_TIME, ATTRIBUTE_WITHOUT_TIME, DAY, TIME} = DateFormat;
-const {MINUTES, HOURS, DAYS} = TimeAbbreviations;
+import { humanizeWaypointDate, convertTime, renderDuration } from '../utils/waypoint.js';
+import { DateFormat } from '../const.js';
 
-const convertTime = (milliseconds) => {
-  const seconds = milliseconds / 1000;
-  const minutes = Math.floor(seconds / 60);
-  const hours = Math.floor(minutes / 60);
-  const days = Math.floor(hours / 24);
-
-  return {
-    minutes,
-    hours,
-    days,
-  };
-};
-
-const renderDuration = ({minutes, hours, days}) => {
-  if (minutes < 60) {
-    return `${String(minutes).padStart(2, '0')}${MINUTES}`;
-  } else if (hours < 24) {
-    return `${String(hours).padStart(2, '0')}${HOURS} ${String(minutes % 60).padStart(2, '0')}${MINUTES}`;
-  } else {
-    return `${String(days).padStart(2, '0')}${DAYS} ${String(hours % 24).padStart(2, '0')}${HOURS} ${String(minutes % 60).padStart(2, '0')}${MINUTES}`;
-  }
-};
+const { ATTRIBUTE_WITH_TIME, ATTRIBUTE_WITHOUT_TIME, DAY, TIME } = DateFormat;
 
 const createWaypointTemplate = (waypoint, destinations, offers) => {
-  const {type, dateFrom, dateTo, basePrice, isFavorite} = waypoint;
+  const { type, dateFrom, dateTo, basePrice, isFavorite } = waypoint;
   const currentDestination = destinations.find((destination) => destination.id === waypoint.destination);
   const offersForWaypoint = offers.find((pointOffers) => pointOffers.type === waypoint.type).offers;
   const selectedOffers = offersForWaypoint.filter((offer) => waypoint.offers.includes(offer.id));
@@ -41,16 +19,16 @@ const createWaypointTemplate = (waypoint, destinations, offers) => {
   return (
     `<li class="trip-events__item">
       <div class="event">
-        <time class="event__date" datetime="${humanizeWatpointDate(dateFrom, ATTRIBUTE_WITHOUT_TIME)}">${humanizeWatpointDate(dateFrom, DAY)}</time>
+        <time class="event__date" datetime="${humanizeWaypointDate(dateFrom, ATTRIBUTE_WITHOUT_TIME)}">${humanizeWaypointDate(dateFrom, DAY)}</time>
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${type.toLowerCase()}.png" alt="Event type icon">
         </div>
         <h3 class="event__title">${type} ${currentDestination.name}</h3>
         <div class="event__schedule">
           <p class="event__time">
-            <time class="event__start-time" datetime="${humanizeWatpointDate(dateFrom, ATTRIBUTE_WITH_TIME)}">${humanizeWatpointDate(dateFrom, TIME)}</time>
+            <time class="event__start-time" datetime="${humanizeWaypointDate(dateFrom, ATTRIBUTE_WITH_TIME)}">${humanizeWaypointDate(dateFrom, TIME)}</time>
             &mdash;
-            <time class="event__end-time" datetime="${humanizeWatpointDate(dateTo, ATTRIBUTE_WITH_TIME)}">${humanizeWatpointDate(dateTo, TIME)}</time>
+            <time class="event__end-time" datetime="${humanizeWaypointDate(dateTo, ATTRIBUTE_WITH_TIME)}">${humanizeWaypointDate(dateTo, TIME)}</time>
           </p>
           <p class="event__duration">${renderDuration(convertTime(eventDuration))}</p>
         </div>
@@ -91,7 +69,7 @@ export default class WaypointView extends AbstractView {
   #handleEditClick = null;
   #handleFavoriteClick = null;
 
-  constructor({waypoint, destinations, offers, onEditClick, onFavoriteClick}) {
+  constructor({ waypoint, destinations, offers, onEditClick, onFavoriteClick }) {
     super();
     this.#waypoint = waypoint;
     this.#destinations = destinations;

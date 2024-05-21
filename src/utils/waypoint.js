@@ -28,4 +28,11 @@ const renderDuration = ({ minutes, hours, days }) => {
   }
 };
 
-export { humanizeWaypointDate, convertTime, renderDuration };
+const formatOfferTitle = (title) => {
+  const replasedTitle = title.replace(/ /gi, '-');
+  return replasedTitle.charAt(0).toLowerCase() + replasedTitle.slice(1);
+};
+
+const upFirstLetter = (word) => word.charAt(0).toUpperCase() + word.slice(1);
+
+export { humanizeWaypointDate, convertTime, renderDuration, formatOfferTitle, upFirstLetter };

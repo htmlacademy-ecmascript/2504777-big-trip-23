@@ -1,13 +1,6 @@
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { TYPES_OF_WAYPOINT, DateFormat, NEW_POINT } from '../const.js';
-import { humanizeWaypointDate } from '../utils/waypoint.js';
-
-const formatOfferTitle = (title) => {
-  const replasedTitle = title.replace(/ /gi, '-');
-  return replasedTitle.charAt(0).toLowerCase() + replasedTitle.slice(1);
-};
-
-const upFirstLetter = (word) => word.charAt(0).toUpperCase() + word.slice(1);
+import { humanizeWaypointDate, formatOfferTitle, upFirstLetter } from '../utils/waypoint.js';
 
 const createEditingPointTemplate = (waypoint, destinations, offers) => {
   const { type, dateFrom, dateTo, basePrice} = waypoint;
@@ -121,22 +114,32 @@ const createEditingPointTemplate = (waypoint, destinations, offers) => {
   );
 };
 
-export default class EditingPointView extends AbstractView {
-  #waypoint = null;
+export default class EditingPointView extends AbstractStatefulView {
   #destinations = null;
   #offers = null;
   #handleFormSubmit = null;
   #handleFormReset = null;
   #editForm = null;
+  #inputDestination = null;
 
-  constructor({waypoint = NEW_POINT, destinations, offers, onFormSubmit, onFormReset}) {
+  constructor({waypoint = NEW_POINT, destinations, offers, onFormSubmit, onFormReset }) {
     super();
-    this.#waypoint = waypoint;
+    this._setState(waypoint);
     this.#destinations = destinations;
     this.#offers = offers;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleFormReset = onFormReset;
+
+    this._restoreHandlers();
+  }
+
+  get template() {
+    return createEditingPointTemplate(this._state, this.#destinations, this.#offers);
+  }
+
+  _restoreHandlers() {
     this.#editForm = this.element.querySelector('.event--edit');
+    this.#inputDestination = this.element.querySelector('.event__input--destination');
 
     this.#editForm
       .addEventListener('submit', this.#formSubmitHandler);
@@ -144,10 +147,12 @@ export default class EditingPointView extends AbstractView {
       .addEventListener('reset', this.#formResetHandler);
     this.element.querySelector('.event__rollup-btn')
       .addEventListener('click', this.#formResetHandler);
-  }
-
-  get template() {
-    return createEditingPointTemplate(this.#waypoint, this.#destinations, this.#offers);
+    this.element.querySelector('.event__type-group')
+      .addEventListener('change', this.#eventTypeChangeHandler);
+    this.#inputDestination
+      .addEventListener('input', this.#eventDestinationChangeHandler);
+    this.#inputDestination
+      .addEventListener('blur', this.#eventDestinationBlurHandler);
   }
 
   #formSubmitHandler = (evt) => {
@@ -158,5 +163,28 @@ export default class EditingPointView extends AbstractView {
   #formResetHandler = (evt) => {
     evt.preventDefault();
     this.#handleFormReset();
+  };
+
+  #eventTypeChangeHandler = (evt) => {
+    evt.preventDefault();
+    this._state.type = evt.target.value;
+    this.updateElement(this._state);
+  };
+
+  #eventDestinationChangeHandler = (evt) => {
+    evt.preventDefault();
+    const usersDestination = this.#destinations.find((destination) => destination.name === evt.target.value);
+    if (usersDestination) {
+      this._state.destination = usersDestination.id;
+      this.updateElement(this._state);
+    }
+  };
+
+  #eventDestinationBlurHandler = (evt) => {
+    const usersDestination = this.#destinations.find((destination) => destination.name === evt.target.value);
+    if (!usersDestination) {
+      const currentDestination = this.#destinations.find((destination) => destination.id === this._state.destination);
+      evt.target.value = currentDestination.name;
+    }
   };
 }

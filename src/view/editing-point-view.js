@@ -115,12 +115,12 @@ const createEditingPointTemplate = (waypoint, destinations, offers) => {
 };
 
 export default class EditingPointView extends AbstractStatefulView {
-  // #waypoint = null;
   #destinations = null;
   #offers = null;
   #handleFormSubmit = null;
   #handleFormReset = null;
   #editForm = null;
+  #inputDestination = null;
 
   constructor({waypoint = NEW_POINT, destinations, offers, onFormSubmit, onFormReset }) {
     super();
@@ -129,7 +129,6 @@ export default class EditingPointView extends AbstractStatefulView {
     this.#offers = offers;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleFormReset = onFormReset;
-    this.#editForm = this.element.querySelector('.event--edit');
 
     this._restoreHandlers();
   }
@@ -139,6 +138,9 @@ export default class EditingPointView extends AbstractStatefulView {
   }
 
   _restoreHandlers() {
+    this.#editForm = this.element.querySelector('.event--edit');
+    this.#inputDestination = this.element.querySelector('.event__input--destination');
+
     this.#editForm
       .addEventListener('submit', this.#formSubmitHandler);
     this.#editForm
@@ -147,8 +149,10 @@ export default class EditingPointView extends AbstractStatefulView {
       .addEventListener('click', this.#formResetHandler);
     this.element.querySelector('.event__type-group')
       .addEventListener('change', this.#eventTypeChangeHandler);
-    this.element.querySelector('.event__input--destination')
+    this.#inputDestination
       .addEventListener('input', this.#eventDestinationChangeHandler);
+    this.#inputDestination
+      .addEventListener('blur', this.#eventDestinationBlurHandler);
   }
 
   #formSubmitHandler = (evt) => {
@@ -173,6 +177,14 @@ export default class EditingPointView extends AbstractStatefulView {
     if (usersDestination) {
       this._state.destination = usersDestination.id;
       this.updateElement(this._state);
+    }
+  };
+
+  #eventDestinationBlurHandler = (evt) => {
+    const usersDestination = this.#destinations.find((destination) => destination.name === evt.target.value);
+    if (!usersDestination) {
+      const currentDestination = this.#destinations.find((destination) => destination.id === this._state.destination);
+      evt.target.value = currentDestination.name;
     }
   };
 }

@@ -77,6 +77,7 @@ export default class WaypointPresenter {
 
   modeReset() {
     if (this.#mode !== 'DEFAULT') {
+      this.#waypointEditComponent.resetElement(this.#waypoint);
       this.#switchToDefaultMode();
     }
   }
@@ -84,6 +85,7 @@ export default class WaypointPresenter {
   #onDocumentEscKeydown = (evt) => {
     if (isEscapeKey(evt)) {
       evt.preventDefault();
+      this.#waypointEditComponent.resetElement(this.#waypoint);
       this.#switchToDefaultMode();
     }
   };
@@ -110,6 +112,7 @@ export default class WaypointPresenter {
   };
 
   #handleFormReset = () => {
+    this.#waypointEditComponent.resetElement(this.#waypoint);
     this.#switchToDefaultMode();
   };
 

@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
-import { TimeAbbreviations } from '../const';
+import { TimeAbbreviation } from '../const';
 
-const { MINUTES, HOURS, DAYS } = TimeAbbreviations;
+const { MINUTES, HOURS, DAYS } = TimeAbbreviation;
 
 const humanizeWaypointDate = (date, format) => dayjs(date).format(format);
 

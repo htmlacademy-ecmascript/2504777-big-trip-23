@@ -24,7 +24,7 @@ const DateFormat = {
   TIME: 'HH:mm',
 };
 
-const TimeAbbreviations = {
+const TimeAbbreviation = {
   MINUTES: 'M',
   HOURS: 'H',
   DAYS: 'D',
@@ -51,5 +51,5 @@ const FilterType = {
   FUTURE: 'future',
 };
 
-export { descriptionFish, PICTURE_SRC, DESTINATIONS, TYPES_OF_WAYPOINT, offersToWaypoints, WAYPOINTS_COUNT, DATE_FROM_LIST, DATE_TO_LIST, DateFormat, TimeAbbreviations, NEW_POINT, FilterType };
+export { descriptionFish, PICTURE_SRC, DESTINATIONS, TYPES_OF_WAYPOINT, offersToWaypoints, WAYPOINTS_COUNT, DATE_FROM_LIST, DATE_TO_LIST, DateFormat, TimeAbbreviation, NEW_POINT, FilterType };
 

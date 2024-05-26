@@ -7,7 +7,7 @@ const getOffers = () =>
       type,
       offers: offersToWaypoints[type]
         .map((offer) => ({
-          id: generateId(),
+          id: String(generateId()),
           title: offer,
           price: getRandomInteger(25, 125),
         }))

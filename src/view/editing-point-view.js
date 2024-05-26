@@ -1,6 +1,8 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import { TYPES_OF_WAYPOINT, DateFormat, NEW_POINT } from '../const.js';
+import { TYPES_OF_WAYPOINT, DateFormat, NEW_POINT, OFFER_ID_PREFIX } from '../const.js';
 import { humanizeWaypointDate, formatOfferTitle, upFirstLetter } from '../utils/waypoint.js';
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
 
 const createEditingPointTemplate = (waypoint, destinations, offers) => {
   const { type, dateFrom, dateTo, basePrice} = waypoint;
@@ -46,19 +48,19 @@ const createEditingPointTemplate = (waypoint, destinations, offers) => {
           </div>
 
           <div class="event__field-group  event__field-group--time">
-            <label class="visually-hidden" for="event-start-time-1">From</label>
-            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${humanizeWaypointDate(dateFrom, DateFormat.FULL)}">
+            <label class="visually-hidden" for="event-start-time-${waypointId}">From</label>
+            <input class="event__input  event__input--time" id="event-start-time-${waypointId}" type="text" name="event-start-time" value="${humanizeWaypointDate(dateFrom, DateFormat.FULL)}">
             &mdash;
-            <label class="visually-hidden" for="event-end-time-1">To</label>
-            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${humanizeWaypointDate(dateTo, DateFormat.FULL)}">
+            <label class="visually-hidden" for="event-end-time-${waypointId}">To</label>
+            <input class="event__input  event__input--time" id="event-end-time-${waypointId}" type="text" name="event-end-time" value="${humanizeWaypointDate(dateTo, DateFormat.FULL)}">
           </div>
 
           <div class="event__field-group  event__field-group--price">
-            <label class="event__label" for="event-price-1">
+            <label class="event__label" for="event-price-${waypointId}">
               <span class="visually-hidden">${basePrice}</span>
               &euro;
             </label>
-            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
+            <input class="event__input  event__input--price" id="event-price-${waypointId}" type="text" name="event-price" value="${basePrice}">
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -80,8 +82,8 @@ const createEditingPointTemplate = (waypoint, destinations, offers) => {
 
                 ${offersForWaypoint.map((offer) => `
                   <div class="event__offer-selector">
-                    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${formatOfferTitle(offer.title)}-${offer.id}" type="checkbox" name="event-offer-${formatOfferTitle(offer.title)}" ${waypoint.offers.includes(offer.id) ? 'checked' : ''}>
-                      <label class="event__offer-label" for="event-offer-${formatOfferTitle(offer.title)}-${offer.id}">
+                    <input class="event__offer-checkbox  visually-hidden" id="${OFFER_ID_PREFIX}${offer.id}-${waypointId}" type="checkbox" name="event-offer-${formatOfferTitle(offer.title)}" ${waypoint.offers.includes(offer.id) ? 'checked' : ''}>
+                      <label class="event__offer-label" for="${OFFER_ID_PREFIX}${offer.id}-${waypointId}">
                         <span class="event__offer-title">${offer.title}</span>
                         &plus;&euro;&nbsp;
                         <span class="event__offer-price">${offer.price}</span>
@@ -115,16 +117,20 @@ const createEditingPointTemplate = (waypoint, destinations, offers) => {
 };
 
 export default class EditingPointView extends AbstractStatefulView {
-  #destinations = null;
-  #offers = null;
+  #waypoint = null;
+  #destinations = [];
+  #offers = [];
   #handleFormSubmit = null;
   #handleFormReset = null;
   #editForm = null;
   #inputDestination = null;
+  #datepickerFrom = null;
+  #datepickerTo = null;
+  #offersSection = null;
 
   constructor({waypoint = NEW_POINT, destinations, offers, onFormSubmit, onFormReset }) {
     super();
-    this._setState(waypoint);
+    this._setState(EditingPointView.parseWaypointToState(waypoint));
     this.#destinations = destinations;
     this.#offers = offers;
     this.#handleFormSubmit = onFormSubmit;
@@ -137,9 +143,22 @@ export default class EditingPointView extends AbstractStatefulView {
     return createEditingPointTemplate(this._state, this.#destinations, this.#offers);
   }
 
+  resetElement(waypoint) {
+    this.updateElement(EditingPointView.parseWaypointToState(waypoint));
+  }
+
+  removeElement() {
+    super.removeElement();
+    this.#datepickerFrom.destroy();
+    this.#datepickerTo.destroy();
+    this.#datepickerFrom = null;
+    this.#datepickerTo = null;
+  }
+
   _restoreHandlers() {
     this.#editForm = this.element.querySelector('.event--edit');
     this.#inputDestination = this.element.querySelector('.event__input--destination');
+    this.#offersSection = this.element.querySelector('.event__section--offers');
 
     this.#editForm
       .addEventListener('submit', this.#formSubmitHandler);
@@ -153,6 +172,38 @@ export default class EditingPointView extends AbstractStatefulView {
       .addEventListener('input', this.#eventDestinationChangeHandler);
     this.#inputDestination
       .addEventListener('blur', this.#eventDestinationBlurHandler);
+
+    if (this.#offersSection) {
+      this.#offersSection
+        .addEventListener('change', this.#eventOfferChangeHandler);
+    }
+
+    this.#setDatepicker();
+  }
+
+  #setDatepicker() {
+    this.#datepickerFrom = flatpickr(
+      this.element.querySelector('[name="event-start-time"]'),
+      {
+        enableTime: true,
+        dateFormat: DateFormat.DATE_FOR_FLATPICKR,
+        'time_24hr': true,
+        defaultDate: this._state.dateFrom,
+        minDate: this._state.dateTo,
+        onChange: this.#eventDateFromChangeHandler,
+      }
+    );
+    this.#datepickerTo = flatpickr(
+      this.element.querySelector('[name="event-end-time"]'),
+      {
+        enableTime: true,
+        dateFormat: DateFormat.DATE_FOR_FLATPICKR,
+        'time_24hr': true,
+        defaultDate: this._state.dateTo,
+        minDate: this._state.dateFrom,
+        onChange: this.#eventDateToChangeHandler,
+      }
+    );
   }
 
   #formSubmitHandler = (evt) => {
@@ -167,16 +218,17 @@ export default class EditingPointView extends AbstractStatefulView {
 
   #eventTypeChangeHandler = (evt) => {
     evt.preventDefault();
-    this._state.type = evt.target.value;
-    this.updateElement(this._state);
+    this.updateElement({
+      type: evt.target.value,
+      offers: [],
+    });
   };
 
   #eventDestinationChangeHandler = (evt) => {
     evt.preventDefault();
     const usersDestination = this.#destinations.find((destination) => destination.name === evt.target.value);
     if (usersDestination) {
-      this._state.destination = usersDestination.id;
-      this.updateElement(this._state);
+      this.updateElement({destination: usersDestination.id});
     }
   };
 
@@ -187,4 +239,36 @@ export default class EditingPointView extends AbstractStatefulView {
       evt.target.value = currentDestination.name;
     }
   };
+
+  #eventOfferChangeHandler = (evt) => {
+    const waypointId = this._state.id || 0;
+    const offerId = evt.target.id.replace(OFFER_ID_PREFIX, '').replace(`-${waypointId}`, '');
+    const chooseOffers = [...this._state.offers];
+
+    if (this._state.offers.includes(offerId)) {
+      this._setState({offers: chooseOffers.filter((offer) => offer !== offerId)});
+    } else {
+      this._setState({offers: chooseOffers.concat(offerId)});
+    }
+  };
+
+  #eventDateFromChangeHandler = ([userDate]) => {
+    this.updateElement({
+      dateFrom: userDate,
+    });
+  };
+
+  #eventDateToChangeHandler = ([userDate]) => {
+    this.updateElement({
+      dateTo: userDate,
+    });
+  };
+
+  static parseWaypointToState(waypoint) {
+    return {...waypoint};
+  }
+
+  static parseStateToWaypoint(state) {
+    return {...state};
+  }
 }

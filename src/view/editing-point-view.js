@@ -1,5 +1,5 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import { TYPES_OF_WAYPOINT, DateFormat, NEW_POINT } from '../const.js';
+import { TYPES_OF_WAYPOINT, DateFormat, NEW_POINT, OFFER_ID_PREFIX } from '../const.js';
 import { humanizeWaypointDate, formatOfferTitle, upFirstLetter } from '../utils/waypoint.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
@@ -82,8 +82,8 @@ const createEditingPointTemplate = (waypoint, destinations, offers) => {
 
                 ${offersForWaypoint.map((offer) => `
                   <div class="event__offer-selector">
-                    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${formatOfferTitle(offer.title)}-${offer.id}" type="checkbox" name="event-offer-${formatOfferTitle(offer.title)}" ${waypoint.offers.includes(offer.id) ? 'checked' : ''}>
-                      <label class="event__offer-label" for="event-offer-${formatOfferTitle(offer.title)}-${offer.id}">
+                    <input class="event__offer-checkbox  visually-hidden" id="${OFFER_ID_PREFIX}${offer.id}-${waypointId}" type="checkbox" name="event-offer-${formatOfferTitle(offer.title)}" ${waypoint.offers.includes(offer.id) ? 'checked' : ''}>
+                      <label class="event__offer-label" for="${OFFER_ID_PREFIX}${offer.id}-${waypointId}">
                         <span class="event__offer-title">${offer.title}</span>
                         &plus;&euro;&nbsp;
                         <span class="event__offer-price">${offer.price}</span>
@@ -186,9 +186,10 @@ export default class EditingPointView extends AbstractStatefulView {
       this.element.querySelector('[name="event-start-time"]'),
       {
         enableTime: true,
-        dateFormat: 'd/m/y H:i',
+        dateFormat: DateFormat.DATE_FOR_FLATPICKR,
         'time_24hr': true,
         defaultDate: this._state.dateFrom,
+        minDate: this._state.dateTo,
         onChange: this.#eventDateFromChangeHandler,
       }
     );
@@ -196,7 +197,7 @@ export default class EditingPointView extends AbstractStatefulView {
       this.element.querySelector('[name="event-end-time"]'),
       {
         enableTime: true,
-        dateFormat: 'd/m/y H:i',
+        dateFormat: DateFormat.DATE_FOR_FLATPICKR,
         'time_24hr': true,
         defaultDate: this._state.dateTo,
         minDate: this._state.dateFrom,
@@ -217,7 +218,10 @@ export default class EditingPointView extends AbstractStatefulView {
 
   #eventTypeChangeHandler = (evt) => {
     evt.preventDefault();
-    this.updateElement({type: evt.target.value});
+    this.updateElement({
+      type: evt.target.value,
+      offers: [],
+    });
   };
 
   #eventDestinationChangeHandler = (evt) => {
@@ -237,14 +241,14 @@ export default class EditingPointView extends AbstractStatefulView {
   };
 
   #eventOfferChangeHandler = (evt) => {
-    const offerId = evt.target.id.split('-').slice(-1).join('');
+    const waypointId = this._state.id || 0;
+    const offerId = evt.target.id.replace(OFFER_ID_PREFIX, '').replace(`-${waypointId}`, '');
     const chooseOffers = [...this._state.offers];
 
     if (this._state.offers.includes(offerId)) {
       this._setState({offers: chooseOffers.filter((offer) => offer !== offerId)});
     } else {
-      chooseOffers.push(offerId);
-      this._setState({offers: chooseOffers});
+      this._setState({offers: chooseOffers.concat(offerId)});
     }
   };
 

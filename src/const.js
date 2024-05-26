@@ -22,6 +22,7 @@ const DateFormat = {
   ATTRIBUTE_WITHOUT_TIME: 'YYYY-MM-DD',
   DAY: 'MMM DD',
   TIME: 'HH:mm',
+  DATE_FOR_FLATPICKR: 'd/m/y H:i',
 };
 
 const TimeAbbreviation = {
@@ -51,5 +52,7 @@ const FilterType = {
   FUTURE: 'future',
 };
 
-export { descriptionFish, PICTURE_SRC, DESTINATIONS, TYPES_OF_WAYPOINT, offersToWaypoints, WAYPOINTS_COUNT, DATE_FROM_LIST, DATE_TO_LIST, DateFormat, TimeAbbreviation, NEW_POINT, FilterType };
+const OFFER_ID_PREFIX = 'event-offer-';
+
+export { descriptionFish, PICTURE_SRC, DESTINATIONS, TYPES_OF_WAYPOINT, offersToWaypoints, WAYPOINTS_COUNT, DATE_FROM_LIST, DATE_TO_LIST, DateFormat, TimeAbbreviation, NEW_POINT, FilterType, OFFER_ID_PREFIX };
 

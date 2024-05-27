@@ -1,5 +1,5 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import { TYPES_OF_WAYPOINT, DateFormat, NEW_POINT, OFFER_ID_PREFIX } from '../const.js';
+import { TYPES_OF_WAYPOINT, DateFormat, NEW_POINT, Prefix } from '../const.js';
 import { humanizeWaypointDate, formatOfferTitle, upFirstLetter } from '../utils/waypoint.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
@@ -82,8 +82,8 @@ const createEditingPointTemplate = (waypoint, destinations, offers) => {
 
                 ${offersForWaypoint.map((offer) => `
                   <div class="event__offer-selector">
-                    <input class="event__offer-checkbox  visually-hidden" id="${OFFER_ID_PREFIX}${offer.id}-${waypointId}" type="checkbox" name="event-offer-${formatOfferTitle(offer.title)}" ${waypoint.offers.includes(offer.id) ? 'checked' : ''}>
-                      <label class="event__offer-label" for="${OFFER_ID_PREFIX}${offer.id}-${waypointId}">
+                    <input class="event__offer-checkbox  visually-hidden" id="${Prefix.OFFER_ID}${offer.id}-${waypointId}" type="checkbox" name="event-offer-${formatOfferTitle(offer.title)}" ${waypoint.offers.includes(offer.id) ? 'checked' : ''}>
+                      <label class="event__offer-label" for="${Prefix.OFFER_ID}${offer.id}-${waypointId}">
                         <span class="event__offer-title">${offer.title}</span>
                         &plus;&euro;&nbsp;
                         <span class="event__offer-price">${offer.price}</span>
@@ -242,7 +242,7 @@ export default class EditingPointView extends AbstractStatefulView {
 
   #eventOfferChangeHandler = (evt) => {
     const waypointId = this._state.id || 0;
-    const offerId = evt.target.id.replace(OFFER_ID_PREFIX, '').replace(`-${waypointId}`, '');
+    const offerId = evt.target.id.replace(Prefix.OFFER_ID, '').replace(`-${waypointId}`, '');
     const chooseOffers = [...this._state.offers];
 
     if (this._state.offers.includes(offerId)) {

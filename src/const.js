@@ -31,6 +31,11 @@ const TimeAbbreviation = {
   DAYS: 'D',
 };
 
+const Prefix = {
+  OFFER_ID: 'event-offer-',
+  SORT_ID: 'sort-',
+};
+
 const descriptionFish = TEXT_FISH.split('.');
 
 const offersToWaypoints = { // ? Явно именование не соответствует критериям, но не могу использовать капс из-за check-in
@@ -52,7 +57,13 @@ const FilterType = {
   FUTURE: 'future',
 };
 
-const OFFER_ID_PREFIX = 'event-offer-';
+const SortType = {
+  DEFAULT: 'day',
+  EVENT: 'event',
+  TIME: 'time',
+  PRICE: 'price',
+  OFFERS: 'offers',
+};
 
-export { descriptionFish, PICTURE_SRC, DESTINATIONS, TYPES_OF_WAYPOINT, offersToWaypoints, WAYPOINTS_COUNT, DATE_FROM_LIST, DATE_TO_LIST, DateFormat, TimeAbbreviation, NEW_POINT, FilterType, OFFER_ID_PREFIX };
+export { descriptionFish, PICTURE_SRC, DESTINATIONS, TYPES_OF_WAYPOINT, offersToWaypoints, WAYPOINTS_COUNT, DATE_FROM_LIST, DATE_TO_LIST, DateFormat, TimeAbbreviation, NEW_POINT, FilterType, Prefix, SortType };
 

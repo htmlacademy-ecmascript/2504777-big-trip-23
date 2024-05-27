@@ -1,20 +1,20 @@
-import dayjs from 'dayjs';
-
+// import dayjs from 'dayjs';
 import AbstractView from '../framework/view/abstract-view.js';
 
 import { humanizeWaypointDate, convertTime, renderDuration } from '../utils/waypoint.js';
+import { getDuration } from '../utils/common.js';
 import { DateFormat } from '../const.js';
 
 const { ATTRIBUTE_WITH_TIME, ATTRIBUTE_WITHOUT_TIME, DAY, TIME } = DateFormat;
 
 const createWaypointTemplate = (waypoint, destinations, offers) => {
   const { type, dateFrom, dateTo, basePrice, isFavorite } = waypoint;
+  // console.log(dayjs(dateFrom).valueOf);
   const currentDestination = destinations.find((destination) => destination.id === waypoint.destination);
   const offersForWaypoint = offers.find((pointOffers) => pointOffers.type === waypoint.type).offers;
   const selectedOffers = offersForWaypoint.filter((offer) => waypoint.offers.includes(offer.id));
 
   const waypointFavoriteClassName = isFavorite ? 'event__favorite-btn--active' : '';
-  const eventDuration = dayjs(dateTo).diff(dayjs(dateFrom));
 
   return (
     `<li class="trip-events__item">
@@ -30,7 +30,7 @@ const createWaypointTemplate = (waypoint, destinations, offers) => {
             &mdash;
             <time class="event__end-time" datetime="${humanizeWaypointDate(dateTo, ATTRIBUTE_WITH_TIME)}">${humanizeWaypointDate(dateTo, TIME)}</time>
           </p>
-          <p class="event__duration">${renderDuration(convertTime(eventDuration))}</p>
+          <p class="event__duration">${renderDuration(convertTime(getDuration(dateFrom, dateTo)))}</p>
         </div>
         <p class="event__price">
           &euro;&nbsp;<span class="event__price-value">${basePrice}</span>

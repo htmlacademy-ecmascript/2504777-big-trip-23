@@ -2,7 +2,6 @@ import dayjs from 'dayjs';
 import { FilterType } from '../const';
 
 const currentDate = new Date();
-// console.log(currentDate);
 
 const filter = {
   [FilterType.EVERTHING]: (waypoints) => waypoints,

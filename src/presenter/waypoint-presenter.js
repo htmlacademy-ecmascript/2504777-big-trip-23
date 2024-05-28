@@ -3,7 +3,6 @@ import { isEscapeKey } from '../utils/common.js';
 import EditingPointView from '../view/editing-point-view.js';
 import WaypointView from '../view/waypoint-view.js';
 
-
 const Mode = {
   DEFAULT: 'DEFAULT',
   EDITING: 'EDITING',

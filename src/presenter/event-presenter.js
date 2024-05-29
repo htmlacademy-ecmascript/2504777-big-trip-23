@@ -24,6 +24,10 @@ export default class EventPresenter {
     this.#waypointsModel = waypointsModel;
   }
 
+  get waypoints() {
+    return this.#waypointsModel.waypoints;
+  }
+
   init() {
     this.#eventWaypoints = sortByDefault([...this.#waypointsModel.waypoints]);
     this.#destinations = [...this.#waypointsModel.destinations];

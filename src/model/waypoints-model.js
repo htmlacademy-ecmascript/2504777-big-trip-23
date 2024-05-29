@@ -1,11 +1,9 @@
-// import { createArray } from '../utils.js';
-// import { WAYPOINTS_COUNT } from '../const.js';
 import { mockWaypoints } from '../mock/waypoints.js';
+import Observable from '../framework/observable.js';
 import { mockDestinations } from '../mock/destination.js';
 import { mockOffers } from '../mock/offers.js';
 
-export default class WaypointsModel {
-  // #waypoints = createArray(WAYPOINTS_COUNT, getRandomWaypoint);
+export default class WaypointsModel extends Observable {
   #waypoints = mockWaypoints;
   #destinations = mockDestinations;
   #offers = mockOffers;

@@ -117,7 +117,7 @@ const createEditingPointTemplate = (waypoint, destinations, offers) => {
 };
 
 export default class EditingPointView extends AbstractStatefulView {
-  #waypoint = null;
+  // #waypoint = null;
   #destinations = [];
   #offers = [];
   #handleFormSubmit = null;
@@ -208,7 +208,7 @@ export default class EditingPointView extends AbstractStatefulView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit();
+    this.#handleFormSubmit(EditingPointView.parseStateToWaypoint(this._state));
   };
 
   #formResetHandler = (evt) => {

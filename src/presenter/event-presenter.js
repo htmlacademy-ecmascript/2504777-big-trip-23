@@ -24,6 +24,8 @@ export default class EventPresenter {
   constructor({eventContainer, waypointsModel}) {
     this.#eventContainer = eventContainer;
     this.#waypointsModel = waypointsModel;
+
+    this.#waypointsModel.addObserver(this.#handleModelEvent);
   }
 
   get waypoints() {
@@ -47,7 +49,7 @@ export default class EventPresenter {
   #renderWaypoint(waypoint, destination, offers) {
     const waypointPresenter = new WaypointPresenter(
       this.#eventListComponent.element,
-      this.#handleWaypointChange,
+      this.#handleViewAction,
       this.#handleModeChange,
     );
     waypointPresenter.init(waypoint, destination, offers);
@@ -62,8 +64,8 @@ export default class EventPresenter {
   #renderWaypointsList() {
     render(this.#eventListComponent, this.#eventContainer);
 
-    for (const eventWaypoints of this.waypoints) {
-      this.#renderWaypoint(eventWaypoints, this.#destinations, this.#offers);
+    for (const waypoint of this.waypoints) {
+      this.#renderWaypoint(waypoint, this.#destinations, this.#offers);
     }
   }
 
@@ -73,7 +75,7 @@ export default class EventPresenter {
   }
 
   #renderEventsBoard() {
-    if (!this.#eventWaypoints.length) {
+    if (!this.waypoints.length) {
       render(new ListEmptyView(), this.#eventContainer);
       return;
     }
@@ -82,9 +84,16 @@ export default class EventPresenter {
     this.#renderWaypointsList();
   }
 
-  #handleWaypointChange = (updatedWaypoint) => {
-    this.#eventWaypoints = this.#eventWaypoints.map((waypoint) => waypoint.id === updatedWaypoint.id ? updatedWaypoint : waypoint);
-    this.#waypointPresenters.get(updatedWaypoint.id).init(updatedWaypoint, this.#destinations, this.#offers);
+  // #handleWaypointChange = (updatedWaypoint) => {
+  //   this.#waypointPresenters.get(updatedWaypoint.id).init(updatedWaypoint, this.#destinations, this.#offers);
+  // };
+
+  #handleViewAction = (actionType, updateType, update) => {
+    console.log((actionType, updateType, update));
+  };
+
+  #handleModelEvent = (updateType, data) => {
+    console.log(updateType, data);
   };
 
   #handleModeChange = () => {
@@ -96,17 +105,7 @@ export default class EventPresenter {
       return;
     }
     this.#currentSortType = selectedSortType;
-    // switch(type) {
-    //   case SortType.PRICE:
-    //     sortByPrice(this.#eventWaypoints);
-    //     break;
-    //   case SortType.TIME:
-    //     sortByTime(this.#eventWaypoints);
-    //     break;
-    //   case SortType.DEFAULT:
-    //     sortByDefault(this.#eventWaypoints);
-    //     break;
-    // }
+
     this.#clearWaypointsList();
     this.#renderWaypointsList();
   };

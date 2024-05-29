@@ -9,7 +9,6 @@ const { ATTRIBUTE_WITH_TIME, ATTRIBUTE_WITHOUT_TIME, DAY, TIME } = DateFormat;
 
 const createWaypointTemplate = (waypoint, destinations, offers) => {
   const { type, dateFrom, dateTo, basePrice, isFavorite } = waypoint;
-  // console.log(dayjs(dateFrom).valueOf);
   const currentDestination = destinations.find((destination) => destination.id === waypoint.destination);
   const offersForWaypoint = offers.find((pointOffers) => pointOffers.type === waypoint.type).offers;
   const selectedOffers = offersForWaypoint.filter((offer) => waypoint.offers.includes(offer.id));

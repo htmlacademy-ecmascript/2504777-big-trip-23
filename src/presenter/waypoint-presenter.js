@@ -1,5 +1,6 @@
 import { render, replace, remove } from '../framework/render';
 import { isEscapeKey } from '../utils/common.js';
+import { UserAction, UpdateType } from '../const.js';
 import EditingPointView from '../view/editing-point-view.js';
 import WaypointView from '../view/waypoint-view.js';
 
@@ -9,7 +10,7 @@ const Mode = {
 };
 export default class WaypointPresenter {
   #waypointListContainer = null;
-  #handleWaypointChange = null;
+  #handleDataChange = null;
   #handleModeChange = null;
 
   #waypointComponent = null;
@@ -21,9 +22,9 @@ export default class WaypointPresenter {
 
   #mode = Mode.DEFAULT;
 
-  constructor(waypointListContainer, onWaypointChange, onModeChange) {
+  constructor(waypointListContainer, onDataChange, onModeChange) {
     this.#waypointListContainer = waypointListContainer;
-    this.#handleWaypointChange = onWaypointChange;
+    this.#handleDataChange = onDataChange;
     this.#handleModeChange = onModeChange;
   }
 
@@ -106,7 +107,12 @@ export default class WaypointPresenter {
     this.#switchToEditingMode();
   };
 
-  #handleFormSubmit = () => {
+  #handleFormSubmit = (waypoint) => {
+    this.#handleDataChange(
+      UserAction.UPDATE_WAYPOINT,
+      UpdateType.MINOR,
+      waypoint,
+    );
     this.#switchToDefaultMode();
   };
 
@@ -116,8 +122,12 @@ export default class WaypointPresenter {
   };
 
   #handleFavoriteClick = () => {
-    this.#waypoint.isFavorite = !this.#waypoint.isFavorite;
-    this.#handleWaypointChange(this.#waypoint);
+    // this.#waypoint.isFavorite = !this.#waypoint.isFavorite;
+    this.#handleDataChange(
+      UserAction.UPDATE_WAYPOINT,
+      UpdateType.MINOR,
+      {...this.#waypoint, isFavorite: !this.#waypoint.isFavorite},
+    );
   };
 }
 

@@ -11,6 +11,8 @@ export default class EventPresenter {
   #waypointsModel = null;
   #sortsComponent = null;
 
+  #currentSortType = SortType.DEFAULT;
+
   #eventListComponent = new EventListView();
 
   #eventWaypoints = [];
@@ -25,11 +27,17 @@ export default class EventPresenter {
   }
 
   get waypoints() {
-    return this.#waypointsModel.waypoints;
+    switch(this.#currentSortType) {
+      case SortType.PRICE:
+        return sortByPrice(this.#waypointsModel.waypoints);
+      case SortType.TIME:
+        return sortByTime(this.#waypointsModel.waypoints);
+    }
+    return sortByDefault(this.#waypointsModel.waypoints);
   }
 
   init() {
-    this.#eventWaypoints = sortByDefault([...this.#waypointsModel.waypoints]);
+    this.#eventWaypoints = this.waypoints;
     this.#destinations = [...this.#waypointsModel.destinations];
     this.#offers = [...this.#waypointsModel.offers];
 
@@ -54,7 +62,7 @@ export default class EventPresenter {
   #renderWaypointsList() {
     render(this.#eventListComponent, this.#eventContainer);
 
-    for (const eventWaypoints of this.#eventWaypoints) {
+    for (const eventWaypoints of this.waypoints) {
       this.#renderWaypoint(eventWaypoints, this.#destinations, this.#offers);
     }
   }
@@ -83,18 +91,22 @@ export default class EventPresenter {
     this.#waypointPresenters.forEach((presenter) => presenter.modeReset());
   };
 
-  #handleSortTypeChange = (type) => {
-    switch(type) {
-      case SortType.PRICE:
-        sortByPrice(this.#eventWaypoints);
-        break;
-      case SortType.TIME:
-        sortByTime(this.#eventWaypoints);
-        break;
-      case SortType.DEFAULT:
-        sortByDefault(this.#eventWaypoints);
-        break;
+  #handleSortTypeChange = (selectedSortType) => {
+    if (this.#currentSortType === selectedSortType) {
+      return;
     }
+    this.#currentSortType = selectedSortType;
+    // switch(type) {
+    //   case SortType.PRICE:
+    //     sortByPrice(this.#eventWaypoints);
+    //     break;
+    //   case SortType.TIME:
+    //     sortByTime(this.#eventWaypoints);
+    //     break;
+    //   case SortType.DEFAULT:
+    //     sortByDefault(this.#eventWaypoints);
+    //     break;
+    // }
     this.#clearWaypointsList();
     this.#renderWaypointsList();
   };

@@ -14,7 +14,6 @@ const createSortingTemplate = () => `
 
 export default class SortingView extends AbstractView {
   #handleSortTypeChange = null;
-  #currentSortType = SortType.DEFAULT;
 
   constructor(onSortTypeChange) {
     super();
@@ -30,10 +29,6 @@ export default class SortingView extends AbstractView {
   #sortTypeChangeHandler = (evt) => {
     evt.preventDefault();
     const selectedSortType = evt.target.id.replace(Prefix.SORT_ID, '');
-    if (this.#currentSortType === selectedSortType) {
-      return;
-    }
     this.#handleSortTypeChange(selectedSortType);
-    this.#currentSortType = selectedSortType;
   };
 }

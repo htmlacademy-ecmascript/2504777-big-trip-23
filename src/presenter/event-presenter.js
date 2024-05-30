@@ -105,7 +105,7 @@ export default class EventPresenter {
         this.#waypointsModel.addWaypoint(updateType, update);
         break;
       case UserAction.DELETE_WAYPOINT:
-        this.#waypointsModel.deleteWaypoint(updateType);
+        this.#waypointsModel.deleteWaypoint(updateType, update);
         break;
     }
   };

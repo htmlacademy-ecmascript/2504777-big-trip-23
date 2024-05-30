@@ -51,6 +51,7 @@ export default class WaypointPresenter {
       onFormSubmit: this.#handleFormSubmit,
       onFormReset: this.#handleFormReset,
       onFormClose: this.#handleFormClose,
+      onFormDelete: this.#handleFormDelete,
     });
 
     if (prevWaypointComponent === null || prevWaypointEditComponent === null) {
@@ -119,8 +120,7 @@ export default class WaypointPresenter {
   };
 
   #handleFormReset = () => {
-    this.#waypointEditComponent.resetElement(this.#waypoint);
-    this.#switchToDefaultMode();
+    console.log('Отмена изменений и закрытие формы');
   };
 
   #handleFormClose = () => {
@@ -128,8 +128,15 @@ export default class WaypointPresenter {
     this.#switchToDefaultMode();
   };
 
+  #handleFormDelete = () => {
+    this.#handleDataChange(
+      UserAction.DELETE_WAYPOINT,
+      UpdateType.MINOR,
+      this.#waypoint,
+    );
+  };
+
   #handleFavoriteClick = () => {
-    // this.#waypoint.isFavorite = !this.#waypoint.isFavorite;
     this.#handleDataChange(
       UserAction.UPDATE_WAYPOINT,
       UpdateType.PATCH,

@@ -123,13 +123,14 @@ export default class EditingPointView extends AbstractStatefulView {
   #handleFormSubmit = null;
   #handleFormReset = null;
   #handleFormClose = null;
+  #handleFormDelete = null;
   #editForm = null;
   #inputDestination = null;
   #datepickerFrom = null;
   #datepickerTo = null;
   #offersSection = null;
 
-  constructor({waypoint = NEW_POINT, destinations, offers, onFormSubmit, onFormReset, onFormClose }) {
+  constructor({waypoint = NEW_POINT, destinations, offers, onFormSubmit, onFormReset, onFormClose, onFormDelete }) {
     super();
     this._setState(EditingPointView.parseWaypointToState(waypoint));
     this.#destinations = destinations;
@@ -137,6 +138,7 @@ export default class EditingPointView extends AbstractStatefulView {
     this.#handleFormSubmit = onFormSubmit;
     this.#handleFormReset = onFormReset;
     this.#handleFormClose = onFormClose;
+    this.#handleFormDelete = onFormDelete;
 
     this._restoreHandlers();
   }
@@ -216,16 +218,16 @@ export default class EditingPointView extends AbstractStatefulView {
   #formResetHandler = (evt) => {
     evt.preventDefault();
     if (evt.target.querySelector('.event__reset-btn').textContent === ResetButtonValue.DELETE) {
-      this.#handleFormReset();
+      this.#handleFormDelete();
     } else {
-      this.#handleFormClose();
+      this.#handleFormReset();
     }
   };
 
   #formClosureHandler = (evt) => {
     evt.preventDefault();
     this.#handleFormClose();
-  }
+  };
 
   #eventTypeChangeHandler = (evt) => {
     evt.preventDefault();

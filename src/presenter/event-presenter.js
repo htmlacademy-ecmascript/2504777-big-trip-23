@@ -4,7 +4,7 @@ import SortingView from '../view/sorting-view.js';
 import WaypointPresenter from './waypoint-presenter.js';
 import ListEmptyView from '../view/list-empty-view.js';
 import { sortByDefault, sortByPrice, sortByTime } from '../utils/sort.js';
-import { SortType } from '../const.js';
+import { SortType, UserAction, UpdateType } from '../const.js';
 
 export default class EventPresenter {
   #eventContainer = null;
@@ -15,7 +15,7 @@ export default class EventPresenter {
 
   #eventListComponent = new EventListView();
 
-  #eventWaypoints = [];
+  // #eventWaypoints = [];
   #destinations = [];
   #offers = [];
 
@@ -39,7 +39,7 @@ export default class EventPresenter {
   }
 
   init() {
-    this.#eventWaypoints = this.waypoints;
+    // this.#eventWaypoints = this.waypoints;
     this.#destinations = [...this.#waypointsModel.destinations];
     this.#offers = [...this.#waypointsModel.offers];
 
@@ -49,7 +49,7 @@ export default class EventPresenter {
   #renderWaypoint(waypoint, destination, offers) {
     const waypointPresenter = new WaypointPresenter(
       this.#eventListComponent.element,
-      this.#handleViewAction,
+      this.#handleUserAction,
       this.#handleModeChange,
     );
     waypointPresenter.init(waypoint, destination, offers);
@@ -88,12 +88,30 @@ export default class EventPresenter {
   //   this.#waypointPresenters.get(updatedWaypoint.id).init(updatedWaypoint, this.#destinations, this.#offers);
   // };
 
-  #handleViewAction = (actionType, updateType, update) => {
-    console.log((actionType, updateType, update));
+  #handleUserAction = (actionType, updateType, update) => {
+    switch(actionType) {
+      case UserAction.UPDATE_WAYPOINT:
+        this.#waypointsModel.updateWaypoint(updateType, update);
+        break;
+      case UserAction.ADD_WAYPOINT:
+        this.#waypointsModel.addWaypoint(updateType, update);
+        break;
+      case UserAction.DELETE_WAYPOINT:
+        this.#waypointsModel.deleteWaypoint(updateType);
+        break;
+    }
   };
 
   #handleModelEvent = (updateType, data) => {
-    console.log(updateType, data);
+    switch(updateType) {
+      case UpdateType.PATCH:
+        this.#waypointPresenters.get(data.id).init(data, this.#destinations, this.#offers);
+        break;
+      case UpdateType.MINOR:
+        break;
+      case UpdateType.MAJOR:
+        break;
+    }
   };
 
   #handleModeChange = () => {

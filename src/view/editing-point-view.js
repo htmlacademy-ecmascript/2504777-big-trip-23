@@ -132,7 +132,7 @@ export default class EditingPointView extends AbstractStatefulView {
 
   constructor({waypoint = NEW_POINT, destinations, offers, onFormSubmit, onFormReset, onFormClose, onFormDelete }) {
     super();
-    this._setState(EditingPointView.parseWaypointToState(waypoint));
+    this._setState(waypoint);
     this.#destinations = destinations;
     this.#offers = offers;
     this.#handleFormSubmit = onFormSubmit;
@@ -148,7 +148,7 @@ export default class EditingPointView extends AbstractStatefulView {
   }
 
   resetElement(waypoint) {
-    this.updateElement(EditingPointView.parseWaypointToState(waypoint));
+    this.updateElement(waypoint);
   }
 
   removeElement() {
@@ -176,16 +176,19 @@ export default class EditingPointView extends AbstractStatefulView {
       .addEventListener('input', this.#eventDestinationChangeHandler);
     this.#inputDestination
       .addEventListener('blur', this.#eventDestinationBlurHandler);
+    this.element.querySelector('.event__input--price')
+      .addEventListener('change', this.#eventPriceChangeHandler);
 
     if (this.#offersSection) {
       this.#offersSection
         .addEventListener('change', this.#eventOfferChangeHandler);
     }
 
-    this.#setDatepicker();
+    this.#setDateFromPicker();
+    this.#setDateToPicker();
   }
 
-  #setDatepicker() {
+  #setDateFromPicker() {
     this.#datepickerFrom = flatpickr(
       this.element.querySelector('[name="event-start-time"]'),
       {
@@ -193,10 +196,13 @@ export default class EditingPointView extends AbstractStatefulView {
         dateFormat: DateFormat.DATE_FOR_FLATPICKR,
         'time_24hr': true,
         defaultDate: this._state.dateFrom,
-        minDate: this._state.dateTo,
-        onChange: this.#eventDateFromChangeHandler,
+        maxDate: this._state.dateTo,
+        onClose: this.#eventDateFromChangeHandler,
       }
     );
+  }
+
+  #setDateToPicker() {
     this.#datepickerTo = flatpickr(
       this.element.querySelector('[name="event-end-time"]'),
       {
@@ -205,14 +211,14 @@ export default class EditingPointView extends AbstractStatefulView {
         'time_24hr': true,
         defaultDate: this._state.dateTo,
         minDate: this._state.dateFrom,
-        onChange: this.#eventDateToChangeHandler,
+        onClose: this.#eventDateToChangeHandler,
       }
     );
   }
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit(EditingPointView.parseStateToWaypoint(this._state));
+    this.#handleFormSubmit(this._state);
   };
 
   #formResetHandler = (evt) => {
@@ -265,6 +271,17 @@ export default class EditingPointView extends AbstractStatefulView {
     }
   };
 
+  #eventPriceChangeHandler = (evt) => {
+    evt.preventDefault();
+    const newPrice = Number(evt.target.value);
+
+    if (newPrice > 0 && Number.isInteger(newPrice)) {
+      this._setState({basePrice: newPrice});
+    } else {
+      evt.target.value = this._state.basePrice;
+    }
+  };
+
   #eventDateFromChangeHandler = ([userDate]) => {
     this.updateElement({
       dateFrom: userDate,
@@ -276,12 +293,4 @@ export default class EditingPointView extends AbstractStatefulView {
       dateTo: userDate,
     });
   };
-
-  static parseWaypointToState(waypoint) {
-    return {...waypoint};
-  }
-
-  static parseStateToWaypoint(state) {
-    return {...state};
-  }
 }

@@ -50,6 +50,7 @@ export default class WaypointPresenter {
       offers: this.#offers,
       onFormSubmit: this.#handleFormSubmit,
       onFormReset: this.#handleFormReset,
+      onFormClose: this.#handleFormClose,
     });
 
     if (prevWaypointComponent === null || prevWaypointEditComponent === null) {
@@ -85,8 +86,9 @@ export default class WaypointPresenter {
   #onDocumentEscKeydown = (evt) => {
     if (isEscapeKey(evt)) {
       evt.preventDefault();
-      this.#waypointEditComponent.resetElement(this.#waypoint);
-      this.#switchToDefaultMode();
+      this.#handleFormClose();
+      // this.#waypointEditComponent.resetElement(this.#waypoint);
+      // this.#switchToDefaultMode();
     }
   };
 
@@ -117,6 +119,11 @@ export default class WaypointPresenter {
   };
 
   #handleFormReset = () => {
+    this.#waypointEditComponent.resetElement(this.#waypoint);
+    this.#switchToDefaultMode();
+  };
+
+  #handleFormClose = () => {
     this.#waypointEditComponent.resetElement(this.#waypoint);
     this.#switchToDefaultMode();
   };

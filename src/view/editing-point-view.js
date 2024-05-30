@@ -1,5 +1,5 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import { TYPES_OF_WAYPOINT, DateFormat, NEW_POINT, Prefix } from '../const.js';
+import { TYPES_OF_WAYPOINT, DateFormat, NEW_POINT, Prefix, ResetButtonValue } from '../const.js';
 import { humanizeWaypointDate, formatOfferTitle, upFirstLetter } from '../utils/waypoint.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
@@ -64,7 +64,7 @@ const createEditingPointTemplate = (waypoint, destinations, offers) => {
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">${waypointId ? 'Delete' : 'Cancel' }</button>
+          <button class="event__reset-btn" type="reset">${waypointId ? ResetButtonValue.DELETE : ResetButtonValue.CANCEL }</button>
           ${waypointId ? `
           <button class="event__rollup-btn" type="button">
             <span class="visually-hidden">Open event</span>
@@ -122,19 +122,21 @@ export default class EditingPointView extends AbstractStatefulView {
   #offers = [];
   #handleFormSubmit = null;
   #handleFormReset = null;
+  #handleFormClose = null;
   #editForm = null;
   #inputDestination = null;
   #datepickerFrom = null;
   #datepickerTo = null;
   #offersSection = null;
 
-  constructor({waypoint = NEW_POINT, destinations, offers, onFormSubmit, onFormReset }) {
+  constructor({waypoint = NEW_POINT, destinations, offers, onFormSubmit, onFormReset, onFormClose }) {
     super();
     this._setState(EditingPointView.parseWaypointToState(waypoint));
     this.#destinations = destinations;
     this.#offers = offers;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleFormReset = onFormReset;
+    this.#handleFormClose = onFormClose;
 
     this._restoreHandlers();
   }
@@ -165,7 +167,7 @@ export default class EditingPointView extends AbstractStatefulView {
     this.#editForm
       .addEventListener('reset', this.#formResetHandler);
     this.element.querySelector('.event__rollup-btn')
-      .addEventListener('click', this.#formResetHandler);
+      .addEventListener('click', this.#formClosureHandler);
     this.element.querySelector('.event__type-group')
       .addEventListener('change', this.#eventTypeChangeHandler);
     this.#inputDestination
@@ -213,8 +215,17 @@ export default class EditingPointView extends AbstractStatefulView {
 
   #formResetHandler = (evt) => {
     evt.preventDefault();
-    this.#handleFormReset();
+    if (evt.target.querySelector('.event__reset-btn').textContent === ResetButtonValue.DELETE) {
+      this.#handleFormReset();
+    } else {
+      this.#handleFormClose();
+    }
   };
+
+  #formClosureHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormClose();
+  }
 
   #eventTypeChangeHandler = (evt) => {
     evt.preventDefault();

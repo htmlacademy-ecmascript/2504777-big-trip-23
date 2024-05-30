@@ -1,4 +1,4 @@
-import { render } from '../framework/render.js';
+import { remove, render } from '../framework/render.js';
 import EventListView from '../view/event-list-view.js';
 import SortingView from '../view/sorting-view.js';
 import WaypointPresenter from './waypoint-presenter.js';
@@ -57,7 +57,10 @@ export default class EventPresenter {
   }
 
   #renderSorts() {
-    this.#sortsComponent = new SortingView(this.#handleSortTypeChange);
+    this.#sortsComponent = new SortingView(
+      this.#handleSortTypeChange,
+      this.#currentSortType,
+    );
     render(this.#sortsComponent, this.#eventContainer);
   }
 
@@ -84,9 +87,14 @@ export default class EventPresenter {
     this.#renderWaypointsList();
   }
 
-  // #handleWaypointChange = (updatedWaypoint) => {
-  //   this.#waypointPresenters.get(updatedWaypoint.id).init(updatedWaypoint, this.#destinations, this.#offers);
-  // };
+  #clearEventsBoard(resetSortType = false) {
+    if (resetSortType) {
+      this.#currentSortType = SortType.DEFAULT;
+    }
+
+    remove(this.#sortsComponent);
+    this.#clearWaypointsList();
+  }
 
   #handleUserAction = (actionType, updateType, update) => {
     switch(actionType) {
@@ -108,8 +116,12 @@ export default class EventPresenter {
         this.#waypointPresenters.get(data.id).init(data, this.#destinations, this.#offers);
         break;
       case UpdateType.MINOR:
+        this.#clearEventsBoard();
+        this.#renderEventsBoard();
         break;
       case UpdateType.MAJOR:
+        this.#clearEventsBoard(true);
+        this.#renderEventsBoard();
         break;
     }
   };

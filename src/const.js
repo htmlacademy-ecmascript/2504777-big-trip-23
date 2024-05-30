@@ -36,6 +36,11 @@ const Prefix = {
   SORT_ID: 'sort-',
 };
 
+const ResetButtonValue = {
+  DELETE: 'Delete',
+  CANCEL: 'Cancel',
+}
+
 const descriptionFish = TEXT_FISH.split('.');
 
 const offersToWaypoints = { // ? Явно именование не соответствует критериям, но не могу использовать капс из-за check-in
@@ -77,5 +82,5 @@ const UpdateType = {
   MAJOR: 'MAJOR',
 };
 
-export { descriptionFish, PICTURE_SRC, DESTINATIONS, TYPES_OF_WAYPOINT, offersToWaypoints, WAYPOINTS_COUNT, DATE_FROM_LIST, DATE_TO_LIST, DateFormat, TimeAbbreviation, NEW_POINT, FilterType, Prefix, SortType, UserAction, UpdateType };
+export { descriptionFish, PICTURE_SRC, DESTINATIONS, TYPES_OF_WAYPOINT, offersToWaypoints, WAYPOINTS_COUNT, DATE_FROM_LIST, DATE_TO_LIST, DateFormat, TimeAbbreviation, NEW_POINT, FilterType, Prefix, SortType, UserAction, UpdateType, ResetButtonValue };
 

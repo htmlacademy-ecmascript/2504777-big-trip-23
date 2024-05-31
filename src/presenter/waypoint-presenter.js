@@ -1,5 +1,6 @@
 import { render, replace, remove } from '../framework/render';
 import { isEscapeKey } from '../utils/common.js';
+import { isMinorUpdate } from '../utils/waypoint.js';
 import { UserAction, UpdateType } from '../const.js';
 import EditingPointView from '../view/editing-point-view.js';
 import WaypointView from '../view/waypoint-view.js';
@@ -110,11 +111,11 @@ export default class WaypointPresenter {
     this.#switchToEditingMode();
   };
 
-  #handleFormSubmit = (waypoint) => {
+  #handleFormSubmit = (update) => {
     this.#handleDataChange(
       UserAction.UPDATE_WAYPOINT,
-      UpdateType.MINOR,
-      waypoint,
+      isMinorUpdate(this.#waypoint, update) ? UpdateType.MINOR : UpdateType.PATCH,
+      update,
     );
     this.#switchToDefaultMode();
   };

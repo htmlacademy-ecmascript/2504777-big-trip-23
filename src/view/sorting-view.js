@@ -29,7 +29,6 @@ export default class SortingView extends AbstractView {
   }
 
   #sortTypeChangeHandler = (evt) => {
-    evt.preventDefault();
     const selectedSortType = evt.target.id.replace(Prefix.SORT_ID, '');
     this.#handleSortTypeChange(selectedSortType);
   };

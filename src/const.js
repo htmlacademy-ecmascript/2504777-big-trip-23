@@ -56,7 +56,7 @@ const offersToWaypoints = { // ? Явно именование не соотве
 };
 
 const FilterType = {
-  EVERTHING: 'everthing',
+  EVERYTHING: 'everything',
   PAST: 'past',
   PRESENT: 'present',
   FUTURE: 'future',

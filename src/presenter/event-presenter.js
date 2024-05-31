@@ -3,7 +3,7 @@ import EventListView from '../view/event-list-view.js';
 import SortingView from '../view/sorting-view.js';
 import WaypointPresenter from './waypoint-presenter.js';
 import ListEmptyView from '../view/list-empty-view.js';
-import { sortByDefault, sortByPrice, sortByTime } from '../utils/sort.js';
+import { sortByCurrentType } from '../utils/sort.js';
 import { SortType, UserAction, UpdateType } from '../const.js';
 
 export default class EventPresenter {
@@ -16,8 +16,8 @@ export default class EventPresenter {
   #eventListComponent = new EventListView();
 
   // #eventWaypoints = [];
-  #destinations = [];
-  #offers = [];
+  // #destinations = [];
+  // #offers = [];
 
   #waypointPresenters = new Map();
 
@@ -29,19 +29,13 @@ export default class EventPresenter {
   }
 
   get waypoints() {
-    switch(this.#currentSortType) {
-      case SortType.PRICE:
-        return sortByPrice(this.#waypointsModel.waypoints);
-      case SortType.TIME:
-        return sortByTime(this.#waypointsModel.waypoints);
-    }
-    return sortByDefault(this.#waypointsModel.waypoints);
+    return sortByCurrentType(this.#currentSortType, this.#waypointsModel.waypoints);
   }
 
   init() {
     // this.#eventWaypoints = this.waypoints;
-    this.#destinations = [...this.#waypointsModel.destinations];
-    this.#offers = [...this.#waypointsModel.offers];
+    // this.#destinations = [...this.#waypointsModel.destinations];
+    // this.#offers = [...this.#waypointsModel.offers];
 
     this.#renderEventsBoard();
   }
@@ -68,7 +62,7 @@ export default class EventPresenter {
     render(this.#eventListComponent, this.#eventContainer);
 
     for (const waypoint of this.waypoints) {
-      this.#renderWaypoint(waypoint, this.#destinations, this.#offers);
+      this.#renderWaypoint(waypoint, this.#waypointsModel.destinations, this.#waypointsModel.offers);
     }
   }
 
@@ -113,7 +107,7 @@ export default class EventPresenter {
   #handleModelEvent = (updateType, data) => {
     switch(updateType) {
       case UpdateType.PATCH:
-        this.#waypointPresenters.get(data.id).init(data, this.#destinations, this.#offers);
+        this.#waypointPresenters.get(data.id).init(data, this.#waypointsModel.destinations, this.#waypointsModel.offers);
         break;
       case UpdateType.MINOR:
         this.#clearEventsBoard();

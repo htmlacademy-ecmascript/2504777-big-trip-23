@@ -1,9 +1,17 @@
 import AbstractView from '../framework/view/abstract-view';
+import { MessageOfListEmpty } from '../const';
 
-const createListEmptyTemplate = () => '<p class="trip-events__msg">Click New Event to create your first point</p>';
+const createListEmptyTemplate = (filter) => `<p class="trip-events__msg">${MessageOfListEmpty[filter]}</p>}`;
 
 export default class ListEmptyView extends AbstractView {
+  #filter = null;
+
+  constructor(filter) {
+    super();
+    this.#filter = filter;
+  }
+
   get template() {
-    return createListEmptyTemplate();
+    return createListEmptyTemplate(this.#filter);
   }
 }

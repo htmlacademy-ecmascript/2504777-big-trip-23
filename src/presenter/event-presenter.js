@@ -5,11 +5,14 @@ import WaypointPresenter from './waypoint-presenter.js';
 import ListEmptyView from '../view/list-empty-view.js';
 import { sortByCurrentType } from '../utils/sort.js';
 import { SortType, UserAction, UpdateType } from '../const.js';
+import { filter } from '../utils/filter.js';
 
 export default class EventPresenter {
   #eventContainer = null;
   #waypointsModel = null;
+  #filtersModel = null;
   #sortsComponent = null;
+  #listEmptyComponent = null;
 
   #currentSortType = SortType.DEFAULT;
 
@@ -21,15 +24,17 @@ export default class EventPresenter {
 
   #waypointPresenters = new Map();
 
-  constructor({eventContainer, waypointsModel}) {
+  constructor({eventContainer, waypointsModel, filtersModel}) {
     this.#eventContainer = eventContainer;
     this.#waypointsModel = waypointsModel;
+    this.#filtersModel = filtersModel;
 
     this.#waypointsModel.addObserver(this.#handleModelEvent);
+    this.#filtersModel.addObserver(this.#handleModelEvent);
   }
 
   get waypoints() {
-    return sortByCurrentType(this.#currentSortType, this.#waypointsModel.waypoints);
+    return sortByCurrentType(this.#currentSortType, filter[this.#filtersModel.filter](this.#waypointsModel.waypoints));
   }
 
   init() {
@@ -66,14 +71,20 @@ export default class EventPresenter {
     }
   }
 
+  #renderListEmpty() {
+    this.#listEmptyComponent = new ListEmptyView(this.#filtersModel.filter);
+    render(this.#listEmptyComponent, this.#eventContainer);
+  }
+
   #clearWaypointsList() {
     this.#waypointPresenters.forEach((presenter) => presenter.destroy());
     this.#waypointPresenters.clear();
+    remove(this.#eventListComponent);
   }
 
   #renderEventsBoard() {
     if (!this.waypoints.length) {
-      render(new ListEmptyView(), this.#eventContainer);
+      this.#renderListEmpty();
       return;
     }
 
@@ -86,6 +97,7 @@ export default class EventPresenter {
       this.#currentSortType = SortType.DEFAULT;
     }
 
+    remove(this.#listEmptyComponent);
     remove(this.#sortsComponent);
     this.#clearWaypointsList();
   }

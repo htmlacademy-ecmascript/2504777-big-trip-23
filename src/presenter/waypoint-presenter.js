@@ -1,5 +1,7 @@
 import { render, replace, remove } from '../framework/render';
 import { isEscapeKey } from '../utils/common.js';
+import { isMinorUpdate } from '../utils/waypoint.js';
+import { UserAction, UpdateType } from '../const.js';
 import EditingPointView from '../view/editing-point-view.js';
 import WaypointView from '../view/waypoint-view.js';
 
@@ -9,7 +11,7 @@ const Mode = {
 };
 export default class WaypointPresenter {
   #waypointListContainer = null;
-  #handleWaypointChange = null;
+  #handleDataChange = null;
   #handleModeChange = null;
 
   #waypointComponent = null;
@@ -21,9 +23,9 @@ export default class WaypointPresenter {
 
   #mode = Mode.DEFAULT;
 
-  constructor(waypointListContainer, onWaypointChange, onModeChange) {
+  constructor(waypointListContainer, onDataChange, onModeChange) {
     this.#waypointListContainer = waypointListContainer;
-    this.#handleWaypointChange = onWaypointChange;
+    this.#handleDataChange = onDataChange;
     this.#handleModeChange = onModeChange;
   }
 
@@ -49,6 +51,7 @@ export default class WaypointPresenter {
       offers: this.#offers,
       onFormSubmit: this.#handleFormSubmit,
       onFormReset: this.#handleFormReset,
+      onFormClose: this.#handleFormClose,
     });
 
     if (prevWaypointComponent === null || prevWaypointEditComponent === null) {
@@ -84,8 +87,7 @@ export default class WaypointPresenter {
   #onDocumentEscKeydown = (evt) => {
     if (isEscapeKey(evt)) {
       evt.preventDefault();
-      this.#waypointEditComponent.resetElement(this.#waypoint);
-      this.#switchToDefaultMode();
+      this.#handleFormClose();
     }
   };
 
@@ -106,18 +108,34 @@ export default class WaypointPresenter {
     this.#switchToEditingMode();
   };
 
-  #handleFormSubmit = () => {
+  #handleFormSubmit = (update) => {
+    this.#handleDataChange(
+      UserAction.UPDATE_WAYPOINT,
+      isMinorUpdate(this.#waypoint, update) ? UpdateType.MINOR : UpdateType.PATCH,
+      update,
+    );
     this.#switchToDefaultMode();
   };
 
   #handleFormReset = () => {
+    this.#handleDataChange(
+      UserAction.DELETE_WAYPOINT,
+      UpdateType.MINOR,
+      this.#waypoint,
+    );
+  };
+
+  #handleFormClose = () => {
     this.#waypointEditComponent.resetElement(this.#waypoint);
     this.#switchToDefaultMode();
   };
 
   #handleFavoriteClick = () => {
-    this.#waypoint.isFavorite = !this.#waypoint.isFavorite;
-    this.#handleWaypointChange(this.#waypoint);
+    this.#handleDataChange(
+      UserAction.UPDATE_WAYPOINT,
+      UpdateType.PATCH,
+      {...this.#waypoint, isFavorite: !this.#waypoint.isFavorite},
+    );
   };
 }
 

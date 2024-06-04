@@ -8,12 +8,12 @@ const DATE_TO_LIST = ['May 21, 2024 10:55:00', 'May 22, 2024 14:00:00', 'May 21,
 
 const NEW_POINT = {
   basePrice: 0,
-  dateFrom: new Date(),
-  dateTo: new Date(),
+  dateFrom: '',
+  dateTo: '',
   destination: '',
   isFavorite: false,
   offers: [],
-  type: 'Flight',
+  type: 'flight',
 };
 
 const DateFormat = {
@@ -36,6 +36,11 @@ const Prefix = {
   SORT_ID: 'sort-',
 };
 
+const ResetButtonValue = {
+  DELETE: 'Delete',
+  CANCEL: 'Cancel',
+}
+
 const descriptionFish = TEXT_FISH.split('.');
 
 const offersToWaypoints = { // ? Явно именование не соответствует критериям, но не могу использовать капс из-за check-in
@@ -51,10 +56,17 @@ const offersToWaypoints = { // ? Явно именование не соотве
 };
 
 const FilterType = {
-  EVERTHING: 'everthing',
+  EVERYTHING: 'everything',
   PAST: 'past',
   PRESENT: 'present',
   FUTURE: 'future',
+};
+
+const MessageOfListEmpty = {
+  [FilterType.EVERYTHING]: 'Click New Event to create your first point',
+  [FilterType.FUTURE]: 'There are no future events now',
+  [FilterType.PRESENT]: 'There are no present events now',
+  [FilterType.PAST]: 'There are no past events now',
 };
 
 const SortType = {
@@ -65,5 +77,17 @@ const SortType = {
   OFFERS: 'offers',
 };
 
-export { descriptionFish, PICTURE_SRC, DESTINATIONS, TYPES_OF_WAYPOINT, offersToWaypoints, WAYPOINTS_COUNT, DATE_FROM_LIST, DATE_TO_LIST, DateFormat, TimeAbbreviation, NEW_POINT, FilterType, Prefix, SortType };
+const UserAction = {
+  UPDATE_WAYPOINT: 'UPDATE_WAYPOINT',
+  ADD_WAYPOINT: 'ADD_WAYPOINT',
+  DELETE_WAYPOINT: 'DELETE_WAYPOINT',
+};
+
+const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+};
+
+export { descriptionFish, PICTURE_SRC, DESTINATIONS, TYPES_OF_WAYPOINT, offersToWaypoints, WAYPOINTS_COUNT, DATE_FROM_LIST, DATE_TO_LIST, DateFormat, TimeAbbreviation, NEW_POINT, FilterType, Prefix, SortType, UserAction, UpdateType, ResetButtonValue, MessageOfListEmpty };
 

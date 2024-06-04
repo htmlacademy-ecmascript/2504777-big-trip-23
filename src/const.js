@@ -8,12 +8,12 @@ const DATE_TO_LIST = ['May 21, 2024 10:55:00', 'May 22, 2024 14:00:00', 'May 21,
 
 const NEW_POINT = {
   basePrice: 0,
-  dateFrom: new Date(),
-  dateTo: new Date(),
+  dateFrom: '',
+  dateTo: '',
   destination: '',
   isFavorite: false,
   offers: [],
-  type: 'Flight',
+  type: 'flight',
 };
 
 const DateFormat = {

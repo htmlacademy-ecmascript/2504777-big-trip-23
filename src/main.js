@@ -3,6 +3,7 @@ import EventPresenter from './presenter/event-presenter.js';
 import WaypointsModel from './model/waypoints-model.js';
 import FiltersModel from './model/filters-model.js';
 import FiltersPresenter from './presenter/filters-presenter.js';
+import NewPointButtonView from './view/new-point-button-view.js';
 import { render, RenderPosition } from './framework/render.js';
 
 const headerMainElement = document.querySelector('.trip-main');
@@ -16,6 +17,7 @@ const eventPresenter = new EventPresenter({
   eventContainer: pageMainElement,
   waypointsModel,
   filtersModel,
+  onNewPointClose: handleNewPointClose,
 });
 
 const filtersPresenter = new FiltersPresenter(
@@ -24,7 +26,19 @@ const filtersPresenter = new FiltersPresenter(
   waypointsModel,
 );
 
+const newPointButtonComponent = new NewPointButtonView(handleNewPointButtonClick);
+
+function handleNewPointButtonClick() {
+  eventPresenter.createNewPoint();
+  newPointButtonComponent.element.disabled = true;
+}
+
+function handleNewPointClose() {
+  newPointButtonComponent.element.disabled = false;
+}
+
 render(new TripInfoView(), headerMainElement, RenderPosition.AFTERBEGIN);
+render(newPointButtonComponent, headerMainElement);
 
 eventPresenter.init();
 filtersPresenter.init();

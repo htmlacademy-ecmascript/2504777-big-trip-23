@@ -39,7 +39,7 @@ const createEditingPointTemplate = (waypoint, destinations, offers) => {
             <label class="event__label  event__type-output" for="event-destination-${waypointId}">
               ${type}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-${waypointId}" type="text" name="event-destination" value="${waypointId ? currentDestination.name : ''}" list="destination-list-${waypointId}">
+            <input class="event__input  event__input--destination" id="event-destination-${waypointId}" type="text" name="event-destination" value="${currentDestination ? currentDestination.name : ''}" list="destination-list-${waypointId}">
             <datalist id="destination-list-${waypointId}">
 
               ${destinations.map((destination) => `<option value="${destination.name}"></option>`).join('')}
@@ -49,10 +49,10 @@ const createEditingPointTemplate = (waypoint, destinations, offers) => {
 
           <div class="event__field-group  event__field-group--time">
             <label class="visually-hidden" for="event-start-time-${waypointId}">From</label>
-            <input class="event__input  event__input--time" id="event-start-time-${waypointId}" type="text" name="event-start-time" value="${humanizeWaypointDate(dateFrom, DateFormat.FULL)}">
+            <input class="event__input  event__input--time" id="event-start-time-${waypointId}" type="text" name="event-start-time" value="${dateFrom ? humanizeWaypointDate(dateFrom, DateFormat.FULL) : ''}">
             &mdash;
             <label class="visually-hidden" for="event-end-time-${waypointId}">To</label>
-            <input class="event__input  event__input--time" id="event-end-time-${waypointId}" type="text" name="event-end-time" value="${humanizeWaypointDate(dateTo, DateFormat.FULL)}">
+            <input class="event__input  event__input--time" id="event-end-time-${waypointId}" type="text" name="event-end-time" value="${dateTo ? humanizeWaypointDate(dateTo, DateFormat.FULL) : ''}">
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -94,9 +94,14 @@ const createEditingPointTemplate = (waypoint, destinations, offers) => {
             </section>
           ` : ''}
 
+          ${!currentDestination || (!currentDestination.description && !currentDestination.pictures.length) ? '' : `
             <section class="event__section  event__section--destination">
               <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-              <p class="event__destination-description">${currentDestination.description}</p>
+
+              ${currentDestination.description ? `
+				  <p class="event__destination-description">${currentDestination.description}</p>
+				  ` : ''}
+
               ${currentDestination.pictures.length ? `
               <div class="event__photos-container">
                 <div class="event__photos-tape">
@@ -107,7 +112,7 @@ const createEditingPointTemplate = (waypoint, destinations, offers) => {
               </div>
               ` : ''}
 
-            </section>
+            </section>`}
 
         </section>`}
 
@@ -117,20 +122,19 @@ const createEditingPointTemplate = (waypoint, destinations, offers) => {
 };
 
 export default class EditingPointView extends AbstractStatefulView {
-  // #waypoint = null;
   #destinations = [];
   #offers = [];
   #handleFormSubmit = null;
   #handleFormReset = null;
   #handleFormClose = null;
-  #handleFormDelete = null;
   #editForm = null;
   #inputDestination = null;
   #datepickerFrom = null;
   #datepickerTo = null;
   #offersSection = null;
+  #rollupButton = null;
 
-  constructor({waypoint = NEW_POINT, destinations, offers, onFormSubmit, onFormReset, onFormClose, onFormDelete }) {
+  constructor({waypoint = NEW_POINT, destinations, offers, onFormSubmit, onFormReset, onFormClose }) {
     super();
     this._setState(waypoint);
     this.#destinations = destinations;
@@ -138,7 +142,6 @@ export default class EditingPointView extends AbstractStatefulView {
     this.#handleFormSubmit = onFormSubmit;
     this.#handleFormReset = onFormReset;
     this.#handleFormClose = onFormClose;
-    this.#handleFormDelete = onFormDelete;
 
     this._restoreHandlers();
   }
@@ -163,13 +166,12 @@ export default class EditingPointView extends AbstractStatefulView {
     this.#editForm = this.element.querySelector('.event--edit');
     this.#inputDestination = this.element.querySelector('.event__input--destination');
     this.#offersSection = this.element.querySelector('.event__section--offers');
+    this.#rollupButton = this.element.querySelector('.event__rollup-btn');
 
     this.#editForm
       .addEventListener('submit', this.#formSubmitHandler);
     this.#editForm
       .addEventListener('reset', this.#formResetHandler);
-    this.element.querySelector('.event__rollup-btn')
-      .addEventListener('click', this.#formClosureHandler);
     this.element.querySelector('.event__type-group')
       .addEventListener('change', this.#eventTypeChangeHandler);
     this.#inputDestination
@@ -178,6 +180,10 @@ export default class EditingPointView extends AbstractStatefulView {
       .addEventListener('blur', this.#eventDestinationBlurHandler);
     this.element.querySelector('.event__input--price')
       .addEventListener('change', this.#eventPriceChangeHandler);
+
+    if (this.#rollupButton) {
+      this.#rollupButton.addEventListener('click', this.#formClosureHandler);
+    }
 
     if (this.#offersSection) {
       this.#offersSection
@@ -223,11 +229,7 @@ export default class EditingPointView extends AbstractStatefulView {
 
   #formResetHandler = (evt) => {
     evt.preventDefault();
-    if (evt.target.querySelector('.event__reset-btn').textContent === ResetButtonValue.DELETE) {
-      this.#handleFormDelete();
-    } else {
-      this.#handleFormReset();
-    }
+    this.#handleFormReset();
   };
 
   #formClosureHandler = (evt) => {
@@ -244,7 +246,7 @@ export default class EditingPointView extends AbstractStatefulView {
   };
 
   #eventDestinationChangeHandler = (evt) => {
-    evt.preventDefault();
+    // evt.preventDefault();
     const usersDestination = this.#destinations.find((destination) => destination.name === evt.target.value);
     if (usersDestination) {
       this.updateElement({destination: usersDestination.id});

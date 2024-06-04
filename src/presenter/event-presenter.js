@@ -2,9 +2,10 @@ import { remove, render } from '../framework/render.js';
 import EventListView from '../view/event-list-view.js';
 import SortingView from '../view/sorting-view.js';
 import WaypointPresenter from './waypoint-presenter.js';
+import NewPointPresenter from './new-point-presenter.js';
 import ListEmptyView from '../view/list-empty-view.js';
 import { sortByCurrentType } from '../utils/sort.js';
-import { SortType, UserAction, UpdateType } from '../const.js';
+import { SortType, UserAction, UpdateType, FilterType } from '../const.js';
 import { filter } from '../utils/filter.js';
 
 export default class EventPresenter {
@@ -13,24 +14,29 @@ export default class EventPresenter {
   #filtersModel = null;
   #sortsComponent = null;
   #listEmptyComponent = null;
+  #newPointPresenter = null;
+  #handleNewPointClose = null;
 
   #currentSortType = SortType.DEFAULT;
 
   #eventListComponent = new EventListView();
 
-  // #eventWaypoints = [];
-  // #destinations = [];
-  // #offers = [];
-
   #waypointPresenters = new Map();
 
-  constructor({eventContainer, waypointsModel, filtersModel}) {
+  constructor({eventContainer, waypointsModel, filtersModel, onNewPointClose}) {
     this.#eventContainer = eventContainer;
     this.#waypointsModel = waypointsModel;
     this.#filtersModel = filtersModel;
+    this.#handleNewPointClose = onNewPointClose;
 
     this.#waypointsModel.addObserver(this.#handleModelEvent);
     this.#filtersModel.addObserver(this.#handleModelEvent);
+
+    this.#newPointPresenter = new NewPointPresenter({
+      waypointListContainer: this.#eventListComponent,
+      onDataChange: this.#handleUserAction,
+      onNewPointClose: this.#handleNewPointClose,
+    });
   }
 
   get waypoints() {
@@ -38,11 +44,12 @@ export default class EventPresenter {
   }
 
   init() {
-    // this.#eventWaypoints = this.waypoints;
-    // this.#destinations = [...this.#waypointsModel.destinations];
-    // this.#offers = [...this.#waypointsModel.offers];
-
     this.#renderEventsBoard();
+  }
+
+  createNewPoint() {
+    this.#filtersModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    this.#newPointPresenter.init(this.#waypointsModel.destinations, this.#waypointsModel.offers);
   }
 
   #renderWaypoint(waypoint, destination, offers) {
@@ -77,6 +84,7 @@ export default class EventPresenter {
   }
 
   #clearWaypointsList() {
+    this.#newPointPresenter.destroy();
     this.#waypointPresenters.forEach((presenter) => presenter.destroy());
     this.#waypointPresenters.clear();
     remove(this.#eventListComponent);
@@ -97,7 +105,10 @@ export default class EventPresenter {
       this.#currentSortType = SortType.DEFAULT;
     }
 
-    remove(this.#listEmptyComponent);
+    if (this.#listEmptyComponent) {
+      remove(this.#listEmptyComponent);
+    }
+
     remove(this.#sortsComponent);
     this.#clearWaypointsList();
   }
@@ -133,6 +144,7 @@ export default class EventPresenter {
   };
 
   #handleModeChange = () => {
+    this.#newPointPresenter.destroy();
     this.#waypointPresenters.forEach((presenter) => presenter.modeReset());
   };
 

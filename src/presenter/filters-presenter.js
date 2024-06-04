@@ -15,6 +15,7 @@ export default class FiltersPresenter {
     this.#waypointsModel = waypointsModel;
 
     this.#waypointsModel.addObserver(this.#handleModelEvent);
+    this.#filtersModel.addObserver(this.#handleModelEvent);
   }
 
   get filters() {

@@ -52,7 +52,6 @@ export default class WaypointPresenter {
       onFormSubmit: this.#handleFormSubmit,
       onFormReset: this.#handleFormReset,
       onFormClose: this.#handleFormClose,
-      onFormDelete: this.#handleFormDelete,
     });
 
     if (prevWaypointComponent === null || prevWaypointEditComponent === null) {
@@ -89,8 +88,6 @@ export default class WaypointPresenter {
     if (isEscapeKey(evt)) {
       evt.preventDefault();
       this.#handleFormClose();
-      // this.#waypointEditComponent.resetElement(this.#waypoint);
-      // this.#switchToDefaultMode();
     }
   };
 
@@ -121,20 +118,16 @@ export default class WaypointPresenter {
   };
 
   #handleFormReset = () => {
-    console.log('Отмена изменений и закрытие формы');
-  };
-
-  #handleFormClose = () => {
-    this.#waypointEditComponent.resetElement(this.#waypoint);
-    this.#switchToDefaultMode();
-  };
-
-  #handleFormDelete = () => {
     this.#handleDataChange(
       UserAction.DELETE_WAYPOINT,
       UpdateType.MINOR,
       this.#waypoint,
     );
+  };
+
+  #handleFormClose = () => {
+    this.#waypointEditComponent.resetElement(this.#waypoint);
+    this.#switchToDefaultMode();
   };
 
   #handleFavoriteClick = () => {

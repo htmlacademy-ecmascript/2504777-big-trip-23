@@ -1,3 +1,4 @@
+// import he from 'he';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { TYPES_OF_WAYPOINT, DateFormat, NEW_POINT, Prefix, ResetButtonValue } from '../const.js';
 import { humanizeWaypointDate, formatOfferTitle, upFirstLetter } from '../utils/waypoint.js';

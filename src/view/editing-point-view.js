@@ -204,7 +204,7 @@ export default class EditingPointView extends AbstractStatefulView {
         'time_24hr': true,
         defaultDate: this._state.dateFrom,
         maxDate: this._state.dateTo,
-        onClose: this.#eventDateFromChangeHandler,
+        onChange: this.#eventDateFromChangeHandler,
       }
     );
   }
@@ -218,7 +218,7 @@ export default class EditingPointView extends AbstractStatefulView {
         'time_24hr': true,
         defaultDate: this._state.dateTo,
         minDate: this._state.dateFrom,
-        onClose: this.#eventDateToChangeHandler,
+        onChange: this.#eventDateToChangeHandler,
       }
     );
   }
@@ -280,20 +280,23 @@ export default class EditingPointView extends AbstractStatefulView {
 
     if (newPrice > 0 && Number.isInteger(newPrice)) {
       this._setState({basePrice: newPrice});
+      evt.target.value = newPrice;
     } else {
       evt.target.value = this._state.basePrice;
     }
   };
 
   #eventDateFromChangeHandler = ([userDate]) => {
-    this.updateElement({
+    this._setState({
       dateFrom: userDate,
     });
+    this.#datepickerTo.set('minDate', userDate);
   };
 
   #eventDateToChangeHandler = ([userDate]) => {
-    this.updateElement({
+    this._setState({
       dateTo: userDate,
     });
+    this.#datepickerFrom.set('maxDate', userDate);
   };
 }

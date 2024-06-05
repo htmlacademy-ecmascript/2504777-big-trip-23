@@ -7,6 +7,16 @@ export default class WaypointsModel extends Observable {
   #waypoints = mockWaypoints;
   #destinations = mockDestinations;
   #offers = mockOffers;
+  #eventsApiService = null;
+
+  constructor({eventsApiService}) {
+    super();
+    this.#eventsApiService = eventsApiService;
+
+    this.#eventsApiService.waypoints.then((waypoints) => {
+      console.log(waypoints);
+    });
+  }
 
   get waypoints() {
     return this.#waypoints;

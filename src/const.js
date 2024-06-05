@@ -89,5 +89,10 @@ const UpdateType = {
   MAJOR: 'MAJOR',
 };
 
-export { descriptionFish, PICTURE_SRC, DESTINATIONS, TYPES_OF_WAYPOINT, offersToWaypoints, WAYPOINTS_COUNT, DATE_FROM_LIST, DATE_TO_LIST, DateFormat, TimeAbbreviation, NEW_POINT, FilterType, Prefix, SortType, UserAction, UpdateType, ResetButtonValue, MessageOfListEmpty };
+const Method = {
+  GET: 'GET',
+  PUT: 'PUT',
+};
+
+export { descriptionFish, PICTURE_SRC, DESTINATIONS, TYPES_OF_WAYPOINT, offersToWaypoints, WAYPOINTS_COUNT, DATE_FROM_LIST, DATE_TO_LIST, DateFormat, TimeAbbreviation, NEW_POINT, FilterType, Prefix, SortType, UserAction, UpdateType, ResetButtonValue, MessageOfListEmpty, Method };
 

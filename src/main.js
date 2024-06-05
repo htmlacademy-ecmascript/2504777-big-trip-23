@@ -47,3 +47,4 @@ render(newPointButtonComponent, headerMainElement);
 
 eventPresenter.init();
 filtersPresenter.init();
+waypointsModel.init();

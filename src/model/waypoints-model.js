@@ -1,10 +1,11 @@
-import { mockWaypoints } from '../mock/waypoints.js';
+// import { mockWaypoints } from '../mock/waypoints.js';
 import Observable from '../framework/observable.js';
+import { UpdateType } from '../const.js';
 import { mockDestinations } from '../mock/destination.js';
 import { mockOffers } from '../mock/offers.js';
 
 export default class WaypointsModel extends Observable {
-  #waypoints = mockWaypoints;
+  #waypoints = [];
   #destinations = mockDestinations;
   #offers = mockOffers;
   #eventsApiService = null;
@@ -12,10 +13,6 @@ export default class WaypointsModel extends Observable {
   constructor({eventsApiService}) {
     super();
     this.#eventsApiService = eventsApiService;
-
-    this.#eventsApiService.waypoints.then((waypoints) => {
-      console.log(waypoints.map(this.#adaptToClient));
-    });
   }
 
   get waypoints() {
@@ -28,6 +25,31 @@ export default class WaypointsModel extends Observable {
 
   get offers() {
     return this.#offers;
+  }
+
+  async init() {
+    try {
+      const waypoints = await this.#eventsApiService.waypoints;
+      this.#waypoints = waypoints.map(this.#adaptToClient);
+    } catch(err) {
+      this.#waypoints = [];
+    }
+
+    try {
+      const destinations = await this.#eventsApiService.destinations;
+      this.#destinations = destinations.map(this.#adaptToClient);
+    } catch(err) {
+      this.#destinations = [];
+    }
+
+    try {
+      const offers = await this.#eventsApiService.offers;
+      this.#offers = offers.map(this.#adaptToClient);
+    } catch(err) {
+      this.#offers = [];
+    }
+
+    this._notify(UpdateType.INIT);
   }
 
   updateWaypoint(updateType, updatedWaypoint) {
@@ -58,7 +80,7 @@ export default class WaypointsModel extends Observable {
 
   #adaptToClient(waypoint) {
     const adaptedWaypoint = {...waypoint,
-      basePrise: waypoint['base_price'],
+      basePrice: waypoint['base_price'],
       dateFrom: new Date(waypoint['date_from']),
       dateTo: new Date(waypoint['date_to']),
       isFavorite: waypoint['is_favorite'],

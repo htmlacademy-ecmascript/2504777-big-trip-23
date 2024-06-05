@@ -1,9 +1,21 @@
 import ApiService from './framework/api-service';
-import { Method } from './const';
+import { Method, EndUrl } from './const';
+
+const { POINTS, DESTINATIONS, OFFERS} = EndUrl;
 
 export default class EventsApiService extends ApiService {
   get waypoints() {
-    return this._load({url: 'points'})
+    return this._load({url: POINTS})
+      .then(ApiService.parseResponse);
+  }
+
+  get destinations() {
+    return this._load({url: DESTINATIONS})
+      .then(ApiService.parseResponse);
+  }
+
+  get offers() {
+    return this._load({url: OFFERS})
       .then(ApiService.parseResponse);
   }
 

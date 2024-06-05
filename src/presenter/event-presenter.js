@@ -4,6 +4,7 @@ import SortingView from '../view/sorting-view.js';
 import WaypointPresenter from './waypoint-presenter.js';
 import NewPointPresenter from './new-point-presenter.js';
 import ListEmptyView from '../view/list-empty-view.js';
+import LoadingView from '../view/loading-view.js';
 import { sortByCurrentType } from '../utils/sort.js';
 import { SortType, UserAction, UpdateType, FilterType } from '../const.js';
 import { filter } from '../utils/filter.js';
@@ -18,8 +19,10 @@ export default class EventPresenter {
   #handleNewPointClose = null;
 
   #currentSortType = SortType.DEFAULT;
+  #isLoading = true;
 
   #eventListComponent = new EventListView();
+  #loadingComponent = new LoadingView();
 
   #waypointPresenters = new Map();
 
@@ -93,6 +96,10 @@ export default class EventPresenter {
     render(this.#listEmptyComponent, this.#eventContainer);
   }
 
+  #renderLoading() {
+    render(this.#loadingComponent, this.#eventContainer);
+  }
+
   #clearWaypointsList() {
     this.#newPointPresenter.destroy();
     this.#waypointPresenters.forEach((presenter) => presenter.destroy());
@@ -101,6 +108,11 @@ export default class EventPresenter {
   }
 
   #renderEventsBoard() {
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
+
     if (!this.waypoints.length) {
       this.#renderListEmpty();
       return;
@@ -148,6 +160,11 @@ export default class EventPresenter {
         break;
       case UpdateType.MAJOR:
         this.#clearEventsBoard(true);
+        this.#renderEventsBoard();
+        break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
         this.#renderEventsBoard();
         break;
     }

@@ -123,6 +123,7 @@ export default class WaypointPresenter {
       UpdateType.MINOR,
       this.#waypoint,
     );
+    document.removeEventListener('keydown', this.#onDocumentEscKeydown);
   };
 
   #handleFormClose = () => {

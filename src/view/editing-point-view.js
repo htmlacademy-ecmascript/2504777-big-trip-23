@@ -1,4 +1,4 @@
-// import he from 'he';
+import he from 'he';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { TYPES_OF_WAYPOINT, DateFormat, NEW_POINT, Prefix, ResetButtonValue } from '../const.js';
 import { humanizeWaypointDate, formatOfferTitle, upFirstLetter } from '../utils/waypoint.js';
@@ -40,7 +40,7 @@ const createEditingPointTemplate = (waypoint, destinations, offers) => {
             <label class="event__label  event__type-output" for="event-destination-${waypointId}">
               ${type}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-${waypointId}" type="text" name="event-destination" value="${currentDestination ? currentDestination.name : ''}" list="destination-list-${waypointId}">
+            <input class="event__input  event__input--destination" id="event-destination-${waypointId}" type="text" name="event-destination" value="${currentDestination ? he.encode(currentDestination.name) : ''}" list="destination-list-${waypointId}">
             <datalist id="destination-list-${waypointId}">
 
               ${destinations.map((destination) => `<option value="${destination.name}"></option>`).join('')}

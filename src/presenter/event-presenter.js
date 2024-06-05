@@ -27,7 +27,13 @@ export default class EventPresenter {
     this.#eventContainer = eventContainer;
     this.#waypointsModel = waypointsModel;
     this.#filtersModel = filtersModel;
-    this.#handleNewPointClose = onNewPointClose;
+    this.#handleNewPointClose = () => {
+      onNewPointClose();
+      if (!this.waypoints.length) {
+        remove(this.#eventListComponent);
+        render(this.#listEmptyComponent, this.#eventContainer);
+      }
+    };
 
     this.#waypointsModel.addObserver(this.#handleModelEvent);
     this.#filtersModel.addObserver(this.#handleModelEvent);
@@ -49,6 +55,10 @@ export default class EventPresenter {
 
   createNewPoint() {
     this.#filtersModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    if (!this.waypoints.length) {
+      remove(this.#listEmptyComponent);
+      render(this.#eventListComponent, this.#eventContainer);
+    }
     this.#newPointPresenter.init(this.#waypointsModel.destinations, this.#waypointsModel.offers);
   }
 

@@ -11,13 +11,29 @@ export default class EventsApiService extends ApiService {
     const response = await this._load({
       url: `points/${waypoint.id}`,
       method: Method.PUT,
-      body: JSON.stringify(waypoint),
+      body: JSON.stringify(this.#adaptToServer(waypoint)),
       headers: new Headers({'Content-Type': 'application/json'}),
     });
 
     const parsedResponse = await ApiService.parseResponse(response);
 
     return parsedResponse;
+  }
+
+  #adaptToServer(waypoint) {
+    const adaptedWaypoint = {...waypoint,
+      'base_price': waypoint.basePrise,
+      'date_from': waypoint.dateFrom.toISOString(),
+      'date_to': waypoint.dateTo.toISOString(),
+      'is_favorite': waypoint.isFavorite,
+    };
+
+    delete adaptedWaypoint.basePrise;
+    delete adaptedWaypoint.dateFrom;
+    delete adaptedWaypoint.dateTo;
+    delete adaptedWaypoint.isFavorite;
+
+    return adaptedWaypoint;
   }
 
 }

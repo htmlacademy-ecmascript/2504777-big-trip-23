@@ -21,7 +21,7 @@ export default class EventsApiService extends ApiService {
 
   async updateWaypoint(waypoint) {
     const response = await this._load({
-      url: `points/${waypoint.id}`,
+      url: `${POINTS}/${waypoint.id}`,
       method: Method.PUT,
       body: JSON.stringify(this.#adaptToServer(waypoint)),
       headers: new Headers({'Content-Type': 'application/json'}),
@@ -30,6 +30,29 @@ export default class EventsApiService extends ApiService {
     const parsedResponse = await ApiService.parseResponse(response);
 
     return parsedResponse;
+  }
+
+  async addWaypoint(waypoint) {
+    const response = await this._load({
+      url: POINTS,
+      method: Method.POST,
+      body: JSON.stringify(this.#adaptToServer(waypoint)),
+      headers: new Headers({'Content-Type': 'application/json'}),
+    });
+
+    const parsedResponse = await ApiService.parseResponse(response);
+
+    return parsedResponse;
+  }
+
+  async deleteWaypoint(waypoint) {
+    const response = await this._load({
+      url: `${POINTS}/${waypoint.id}`,
+      method: Method.DELETE,
+    });
+
+    console.log(response);
+    return response;
   }
 
   #adaptToServer(waypoint) {

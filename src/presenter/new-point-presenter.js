@@ -56,7 +56,7 @@ export default class NewPointPresenter {
     this.#handleDataChange(
       UserAction.ADD_WAYPOINT,
       UpdateType.MINOR,
-      {id: generateId(), ...update},
+      update,
     );
     this.destroy();
   };

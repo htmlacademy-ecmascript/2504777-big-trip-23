@@ -36,10 +36,13 @@ const Prefix = {
   SORT_ID: 'sort-',
 };
 
-const ResetButtonValue = {
+const ButtonValue = {
+  SAVE: 'Save',
   DELETE: 'Delete',
   CANCEL: 'Cancel',
-}
+  SAVING: 'Saving...',
+  DELETING: 'Deleting...',
+};
 
 const descriptionFish = TEXT_FISH.split('.');
 
@@ -108,5 +111,5 @@ const EndUrl = {
   OFFERS: 'offers',
 };
 
-export { descriptionFish, PICTURE_SRC, DESTINATIONS, TYPES_OF_WAYPOINT, offersToWaypoints, WAYPOINTS_COUNT, DATE_FROM_LIST, DATE_TO_LIST, DateFormat, TimeAbbreviation, NEW_POINT, FilterType, Prefix, SortType, UserAction, UpdateType, ResetButtonValue, MessageOfListEmpty, Method, Service, EndUrl };
+export { descriptionFish, PICTURE_SRC, DESTINATIONS, TYPES_OF_WAYPOINT, offersToWaypoints, WAYPOINTS_COUNT, DATE_FROM_LIST, DATE_TO_LIST, DateFormat, TimeAbbreviation, NEW_POINT, FilterType, Prefix, SortType, UserAction, UpdateType, ButtonValue, MessageOfListEmpty, Method, Service, EndUrl };
 

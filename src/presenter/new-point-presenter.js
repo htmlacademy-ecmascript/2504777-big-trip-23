@@ -45,6 +45,13 @@ export default class NewPointPresenter {
     this.#handleNewPointClose();
   }
 
+  setSaving() {
+    this.#waypointEditComponent.updateElement({
+      isSaving: true,
+      isDisabled: true,
+    });
+  }
+
   #onDocumentEscKeydown = (evt) => {
     if (isEscapeKey(evt)) {
       evt.preventDefault();
@@ -58,7 +65,7 @@ export default class NewPointPresenter {
       UpdateType.MINOR,
       update,
     );
-    this.destroy();
+    // this.destroy();
   };
 
   #handleFormReset = () => {

@@ -51,7 +51,6 @@ export default class EventsApiService extends ApiService {
       method: Method.DELETE,
     });
 
-    console.log(response);
     return response;
   }
 

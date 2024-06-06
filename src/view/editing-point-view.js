@@ -239,6 +239,7 @@ export default class EditingPointView extends AbstractStatefulView {
 
   #formResetHandler = (evt) => {
     evt.preventDefault();
+    // console.log('Нажали на кнопку DELETE');
     this.#handleFormReset();
   };
 

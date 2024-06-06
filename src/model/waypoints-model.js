@@ -1,13 +1,13 @@
 // import { mockWaypoints } from '../mock/waypoints.js';
 import Observable from '../framework/observable.js';
 import { UpdateType } from '../const.js';
-import { mockDestinations } from '../mock/destination.js';
-import { mockOffers } from '../mock/offers.js';
+// import { mockDestinations } from '../mock/destination.js';
+// import { mockOffers } from '../mock/offers.js';
 
 export default class WaypointsModel extends Observable {
   #waypoints = [];
-  #destinations = mockDestinations;
-  #offers = mockOffers;
+  #destinations = [];
+  #offers = [];
   #eventsApiService = null;
 
   constructor({eventsApiService}) {
@@ -52,14 +52,20 @@ export default class WaypointsModel extends Observable {
     this._notify(UpdateType.INIT);
   }
 
-  updateWaypoint(updateType, updatedWaypoint) {
-    if (!this.#waypoints.find((waypoint) => waypoint.id === updatedWaypoint.id)) {
+  async updateWaypoint(updateType, update) {
+    if (!this.#waypoints.find((waypoint) => waypoint.id === update.id)) {
       throw new Error('Can\'t update unexisting waypoint');
     }
 
-    this.#waypoints = this.#waypoints.map((waypoint) => waypoint.id === updatedWaypoint.id ? updatedWaypoint : waypoint);
+    try {
+      const response = await this.#eventsApiService.updateWaypoint(update);
+      const updatedWaypoint = this.#adaptToClient(response);
+      this.#waypoints = this.#waypoints.map((waypoint) => waypoint.id === updatedWaypoint.id ? updatedWaypoint : waypoint);
+      this._notify(updateType, updatedWaypoint);
+    } catch(err) {
+      throw new Error('Can\'t update waypoint');
+    }
 
-    this._notify(updateType, updatedWaypoint);
   }
 
   addWaypoint(updateType, waypointToAdd) {

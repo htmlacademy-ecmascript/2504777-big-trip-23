@@ -34,13 +34,13 @@ export default class EventsApiService extends ApiService {
 
   #adaptToServer(waypoint) {
     const adaptedWaypoint = {...waypoint,
-      'base_price': waypoint.basePrise,
+      'base_price': waypoint.basePrice,
       'date_from': waypoint.dateFrom.toISOString(),
       'date_to': waypoint.dateTo.toISOString(),
       'is_favorite': waypoint.isFavorite,
     };
 
-    delete adaptedWaypoint.basePrise;
+    delete adaptedWaypoint.basePrice;
     delete adaptedWaypoint.dateFrom;
     delete adaptedWaypoint.dateTo;
     delete adaptedWaypoint.isFavorite;

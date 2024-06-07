@@ -57,8 +57,8 @@ export default class EventsApiService extends ApiService {
   #adaptToServer(waypoint) {
     const adaptedWaypoint = {...waypoint,
       'base_price': waypoint.basePrice,
-      'date_from': waypoint.dateFrom.toISOString(),
-      'date_to': waypoint.dateTo.toISOString(),
+      'date_from': waypoint.dateFrom instanceof Date ? waypoint.dateFrom.toISOString() : null,
+      'date_to': waypoint.dateTo instanceof Date ? waypoint.dateTo.toISOString() : null,
       'is_favorite': waypoint.isFavorite,
     };
 

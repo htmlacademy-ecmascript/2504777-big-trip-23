@@ -50,7 +50,7 @@ const createEditingPointTemplate = (waypoint, destinations, offers) => {
             <label class="event__label  event__type-output" for="event-destination-${waypointId}">
               ${type}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-${waypointId}" type="text" name="event-destination" value="${currentDestination ? he.encode(currentDestination.name) : ''}" list="destination-list-${waypointId}" ${isDisabled ? 'disabled' : ''}>
+            <input class="event__input  event__input--destination" id="event-destination-${waypointId}" type="text" name="event-destination" value="${currentDestination ? he.encode(currentDestination.name) : ''}" list="destination-list-${waypointId}" ${isDisabled ? 'disabled' : ''} required>
             <datalist id="destination-list-${waypointId}">
 
               ${destinations.map((destination) => `<option value="${destination.name}"></option>`).join('')}
@@ -60,10 +60,10 @@ const createEditingPointTemplate = (waypoint, destinations, offers) => {
 
           <div class="event__field-group  event__field-group--time">
             <label class="visually-hidden" for="event-start-time-${waypointId}">From</label>
-            <input class="event__input  event__input--time" id="event-start-time-${waypointId}" type="text" name="event-start-time" value="${dateFrom ? humanizeWaypointDate(dateFrom, DateFormat.FULL) : ''}" ${isDisabled ? 'disabled' : ''}>
+            <input class="event__input  event__input--time" id="event-start-time-${waypointId}" type="text" name="event-start-time" value="${dateFrom ? humanizeWaypointDate(dateFrom, DateFormat.FULL) : ''}" ${isDisabled ? 'disabled' : ''} required>
             &mdash;
             <label class="visually-hidden" for="event-end-time-${waypointId}">To</label>
-            <input class="event__input  event__input--time" id="event-end-time-${waypointId}" type="text" name="event-end-time" value="${dateTo ? humanizeWaypointDate(dateTo, DateFormat.FULL) : ''}" ${isDisabled ? 'disabled' : ''}>
+            <input class="event__input  event__input--time" id="event-end-time-${waypointId}" type="text" name="event-end-time" value="${dateTo ? humanizeWaypointDate(dateTo, DateFormat.FULL) : ''}" ${isDisabled ? 'disabled' : ''} required>
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -71,7 +71,7 @@ const createEditingPointTemplate = (waypoint, destinations, offers) => {
               <span class="visually-hidden">${basePrice}</span>
               &euro;
             </label>
-            <input class="event__input  event__input--price" id="event-price-${waypointId}" type="text" name="event-price" value="${basePrice}" ${isDisabled ? 'disabled' : ''}>
+            <input class="event__input  event__input--price" id="event-price-${waypointId}" type="text" name="event-price" value="${basePrice}" ${isDisabled ? 'disabled' : ''} required>
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>${isSaving ? ButtonValue.SAVING : ButtonValue.SAVE}</button>

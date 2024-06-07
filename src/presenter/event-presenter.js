@@ -18,6 +18,8 @@ export default class EventPresenter {
   #listEmptyComponent = null;
   #newPointPresenter = null;
   #handleNewPointClose = null;
+  #enableButton = null;
+  #disableButton = null;
 
   #currentSortType = SortType.DEFAULT;
   #isLoading = true;
@@ -32,17 +34,19 @@ export default class EventPresenter {
 
   #waypointPresenters = new Map();
 
-  constructor({eventContainer, waypointsModel, filtersModel, onNewPointClose}) {
+  constructor({eventContainer, waypointsModel, filtersModel, enableButton, disableButton}) {
     this.#eventContainer = eventContainer;
     this.#waypointsModel = waypointsModel;
     this.#filtersModel = filtersModel;
     this.#handleNewPointClose = () => {
-      onNewPointClose();
+      enableButton();
       if (!this.waypoints.length) {
         remove(this.#eventListComponent);
         render(this.#listEmptyComponent, this.#eventContainer);
       }
     };
+    this.#enableButton = enableButton;
+    this.#disableButton = disableButton;
 
     this.#waypointsModel.addObserver(this.#handleModelEvent);
     this.#filtersModel.addObserver(this.#handleModelEvent);
@@ -123,15 +127,18 @@ export default class EventPresenter {
     }
 
     if (this.#isLoading) {
+      this.#disableButton();
       this.#renderLoading();
       return;
     }
 
     if (!this.waypoints.length) {
+      this.#enableButton();
       this.#renderListEmpty();
       return;
     }
 
+    this.#enableButton();
     this.#renderSorts();
     this.#renderWaypointsList();
   }

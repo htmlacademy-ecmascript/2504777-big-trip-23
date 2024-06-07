@@ -22,7 +22,8 @@ const eventPresenter = new EventPresenter({
   eventContainer: pageMainElement,
   waypointsModel,
   filtersModel,
-  onNewPointClose: handleNewPointClose,
+  enableButton,
+  disableButton,
 });
 
 const filtersPresenter = new FiltersPresenter(
@@ -33,14 +34,7 @@ const filtersPresenter = new FiltersPresenter(
 
 const newPointButtonComponent = new NewPointButtonView(handleNewPointButtonClick);
 
-function handleNewPointButtonClick() {
-  eventPresenter.createNewPoint();
-  newPointButtonComponent.element.disabled = true;
-}
-
-function handleNewPointClose() {
-  newPointButtonComponent.element.disabled = false;
-}
+render(newPointButtonComponent, headerMainElement);
 
 filtersPresenter.init();
 eventPresenter.init();
@@ -50,6 +44,17 @@ waypointsModel.init()
       return;
     }
     render(new TripInfoView(), headerMainElement, RenderPosition.AFTERBEGIN);
-    render(newPointButtonComponent, headerMainElement);
   });
 
+function handleNewPointButtonClick() {
+  eventPresenter.createNewPoint();
+  disableButton();
+}
+
+function disableButton() {
+  newPointButtonComponent.element.disabled = true;
+}
+
+function enableButton() {
+  newPointButtonComponent.element.disabled = false;
+}

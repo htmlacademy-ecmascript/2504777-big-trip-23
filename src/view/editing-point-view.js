@@ -60,10 +60,10 @@ const createEditingPointTemplate = (waypoint, destinations, offers) => {
 
           <div class="event__field-group  event__field-group--time">
             <label class="visually-hidden" for="event-start-time-${waypointId}">From</label>
-            <input class="event__input  event__input--time" id="event-start-time-${waypointId}" type="text" name="event-start-time" value="${dateFrom ? humanizeWaypointDate(dateFrom, DateFormat.FULL) : ''}" ${isDisabled ? 'disabled' : ''} required>
+            <input class="event__input  event__input--time" id="event-start-time-${waypointId}" type="text" name="event-start-time" value="${dateFrom ? humanizeWaypointDate(dateFrom, DateFormat.FULL) : ''}" ${isDisabled ? 'disabled' : ''}>
             &mdash;
             <label class="visually-hidden" for="event-end-time-${waypointId}">To</label>
-            <input class="event__input  event__input--time" id="event-end-time-${waypointId}" type="text" name="event-end-time" value="${dateTo ? humanizeWaypointDate(dateTo, DateFormat.FULL) : ''}" ${isDisabled ? 'disabled' : ''} required>
+            <input class="event__input  event__input--time" id="event-end-time-${waypointId}" type="text" name="event-end-time" value="${dateTo ? humanizeWaypointDate(dateTo, DateFormat.FULL) : ''}" ${isDisabled ? 'disabled' : ''}>
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -71,7 +71,7 @@ const createEditingPointTemplate = (waypoint, destinations, offers) => {
               <span class="visually-hidden">${basePrice}</span>
               &euro;
             </label>
-            <input class="event__input  event__input--price" id="event-price-${waypointId}" type="text" name="event-price" value="${basePrice}" ${isDisabled ? 'disabled' : ''} required>
+            <input class="event__input  event__input--price" id="event-price-${waypointId}" type="text" name="event-price" value="${basePrice}" ${isDisabled ? 'disabled' : ''}>
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>${isSaving ? ButtonValue.SAVING : ButtonValue.SAVE}</button>
@@ -239,7 +239,6 @@ export default class EditingPointView extends AbstractStatefulView {
 
   #formResetHandler = (evt) => {
     evt.preventDefault();
-    // console.log('Нажали на кнопку DELETE');
     this.#handleFormReset();
   };
 
@@ -257,7 +256,6 @@ export default class EditingPointView extends AbstractStatefulView {
   };
 
   #eventDestinationChangeHandler = (evt) => {
-    // evt.preventDefault();
     const usersDestination = this.#destinations.find((destination) => destination.name === evt.target.value);
     if (usersDestination) {
       this.updateElement({destination: usersDestination.id});
@@ -268,7 +266,7 @@ export default class EditingPointView extends AbstractStatefulView {
     const usersDestination = this.#destinations.find((destination) => destination.name === evt.target.value);
     if (!usersDestination) {
       const currentDestination = this.#destinations.find((destination) => destination.id === this._state.destination);
-      evt.target.value = currentDestination.name;
+      evt.target.value = currentDestination ? currentDestination.name : '';
     }
   };
 

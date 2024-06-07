@@ -1,15 +1,25 @@
-// import he from 'he';
+import he from 'he';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import { TYPES_OF_WAYPOINT, DateFormat, NEW_POINT, Prefix, ResetButtonValue } from '../const.js';
+import { TYPES_OF_WAYPOINT, DateFormat, NEW_POINT, Prefix, ButtonValue } from '../const.js';
 import { humanizeWaypointDate, formatOfferTitle, upFirstLetter } from '../utils/waypoint.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
 const createEditingPointTemplate = (waypoint, destinations, offers) => {
-  const { type, dateFrom, dateTo, basePrice} = waypoint;
+  const { type, dateFrom, dateTo, basePrice, isDeleting, isDisabled, isSaving} = waypoint;
   const currentDestination = destinations.find((destination) => destination.id === waypoint.destination);
   const offersForWaypoint = offers.find((pointOffers) => pointOffers.type === waypoint.type).offers;
   const waypointId = waypoint.id || 0;
+
+  const getResetButtonValue = () => {
+    if (waypointId) {
+      if (isDeleting) {
+        return ButtonValue.DELETING;
+      }
+      return ButtonValue.DELETE;
+    }
+    return ButtonValue.CANCEL;
+  };
 
   return (
     `<li class="trip-events__item">
@@ -20,7 +30,7 @@ const createEditingPointTemplate = (waypoint, destinations, offers) => {
               <span class="visually-hidden">Choose event type</span>
               <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
             </label>
-            <input class="event__type-toggle  visually-hidden" id="event-type-toggle-${waypointId}" type="checkbox">
+            <input class="event__type-toggle  visually-hidden" id="event-type-toggle-${waypointId}" type="checkbox" ${isDisabled ? 'disabled' : ''}>
 
             <div class="event__type-list">
               <fieldset class="event__type-group">
@@ -40,7 +50,7 @@ const createEditingPointTemplate = (waypoint, destinations, offers) => {
             <label class="event__label  event__type-output" for="event-destination-${waypointId}">
               ${type}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-${waypointId}" type="text" name="event-destination" value="${currentDestination ? currentDestination.name : ''}" list="destination-list-${waypointId}">
+            <input class="event__input  event__input--destination" id="event-destination-${waypointId}" type="text" name="event-destination" value="${currentDestination ? he.encode(currentDestination.name) : ''}" list="destination-list-${waypointId}" ${isDisabled ? 'disabled' : ''} required>
             <datalist id="destination-list-${waypointId}">
 
               ${destinations.map((destination) => `<option value="${destination.name}"></option>`).join('')}
@@ -50,10 +60,10 @@ const createEditingPointTemplate = (waypoint, destinations, offers) => {
 
           <div class="event__field-group  event__field-group--time">
             <label class="visually-hidden" for="event-start-time-${waypointId}">From</label>
-            <input class="event__input  event__input--time" id="event-start-time-${waypointId}" type="text" name="event-start-time" value="${dateFrom ? humanizeWaypointDate(dateFrom, DateFormat.FULL) : ''}">
+            <input class="event__input  event__input--time" id="event-start-time-${waypointId}" type="text" name="event-start-time" value="${dateFrom ? humanizeWaypointDate(dateFrom, DateFormat.FULL) : ''}" ${isDisabled ? 'disabled' : ''}>
             &mdash;
             <label class="visually-hidden" for="event-end-time-${waypointId}">To</label>
-            <input class="event__input  event__input--time" id="event-end-time-${waypointId}" type="text" name="event-end-time" value="${dateTo ? humanizeWaypointDate(dateTo, DateFormat.FULL) : ''}">
+            <input class="event__input  event__input--time" id="event-end-time-${waypointId}" type="text" name="event-end-time" value="${dateTo ? humanizeWaypointDate(dateTo, DateFormat.FULL) : ''}" ${isDisabled ? 'disabled' : ''}>
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -61,16 +71,15 @@ const createEditingPointTemplate = (waypoint, destinations, offers) => {
               <span class="visually-hidden">${basePrice}</span>
               &euro;
             </label>
-            <input class="event__input  event__input--price" id="event-price-${waypointId}" type="text" name="event-price" value="${basePrice}">
+            <input class="event__input  event__input--price" id="event-price-${waypointId}" type="text" name="event-price" value="${basePrice}" ${isDisabled ? 'disabled' : ''}>
           </div>
 
-          <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">${waypointId ? ResetButtonValue.DELETE : ResetButtonValue.CANCEL }</button>
+          <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>${isSaving ? ButtonValue.SAVING : ButtonValue.SAVE}</button>
+          <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>${getResetButtonValue()}</button>
           ${waypointId ? `
           <button class="event__rollup-btn" type="button">
             <span class="visually-hidden">Open event</span>
           </button>` : '' }
-
         </header>
 
         ${(!currentDestination && !offersForWaypoint.length) ? '' : `
@@ -83,7 +92,7 @@ const createEditingPointTemplate = (waypoint, destinations, offers) => {
 
                 ${offersForWaypoint.map((offer) => `
                   <div class="event__offer-selector">
-                    <input class="event__offer-checkbox  visually-hidden" id="${Prefix.OFFER_ID}${offer.id}-${waypointId}" type="checkbox" name="event-offer-${formatOfferTitle(offer.title)}" ${waypoint.offers.includes(offer.id) ? 'checked' : ''}>
+                    <input class="event__offer-checkbox  visually-hidden" id="${Prefix.OFFER_ID}${offer.id}-${waypointId}" type="checkbox" name="event-offer-${formatOfferTitle(offer.title)}" ${waypoint.offers.includes(offer.id) ? 'checked' : ''} ${isDisabled ? 'disabled' : ''}>
                       <label class="event__offer-label" for="${Prefix.OFFER_ID}${offer.id}-${waypointId}">
                         <span class="event__offer-title">${offer.title}</span>
                         &plus;&euro;&nbsp;
@@ -137,7 +146,7 @@ export default class EditingPointView extends AbstractStatefulView {
 
   constructor({waypoint = NEW_POINT, destinations, offers, onFormSubmit, onFormReset, onFormClose }) {
     super();
-    this._setState(waypoint);
+    this._setState(EditingPointView.parseWaypointToState(waypoint));
     this.#destinations = destinations;
     this.#offers = offers;
     this.#handleFormSubmit = onFormSubmit;
@@ -152,7 +161,7 @@ export default class EditingPointView extends AbstractStatefulView {
   }
 
   resetElement(waypoint) {
-    this.updateElement(waypoint);
+    this.updateElement((EditingPointView.parseWaypointToState(waypoint)));
   }
 
   removeElement() {
@@ -225,7 +234,7 @@ export default class EditingPointView extends AbstractStatefulView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit(this._state);
+    this.#handleFormSubmit(EditingPointView.parseStateToWaypoint(this._state));
   };
 
   #formResetHandler = (evt) => {
@@ -247,7 +256,6 @@ export default class EditingPointView extends AbstractStatefulView {
   };
 
   #eventDestinationChangeHandler = (evt) => {
-    // evt.preventDefault();
     const usersDestination = this.#destinations.find((destination) => destination.name === evt.target.value);
     if (usersDestination) {
       this.updateElement({destination: usersDestination.id});
@@ -258,7 +266,7 @@ export default class EditingPointView extends AbstractStatefulView {
     const usersDestination = this.#destinations.find((destination) => destination.name === evt.target.value);
     if (!usersDestination) {
       const currentDestination = this.#destinations.find((destination) => destination.id === this._state.destination);
-      evt.target.value = currentDestination.name;
+      evt.target.value = currentDestination ? currentDestination.name : '';
     }
   };
 
@@ -299,4 +307,22 @@ export default class EditingPointView extends AbstractStatefulView {
     });
     this.#datepickerFrom.set('maxDate', userDate);
   };
+
+  static parseWaypointToState(waypoint) {
+    return {...waypoint,
+      isSaving: false,
+      isDeleting: false,
+      isDisabled: false,
+    };
+  }
+
+  static parseStateToWaypoint(state) {
+    const waypoint = {...state};
+
+    delete waypoint.isSaving;
+    delete waypoint.isDeleting;
+    delete waypoint.isDisabled;
+
+    return waypoint;
+  }
 }

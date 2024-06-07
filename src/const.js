@@ -36,10 +36,13 @@ const Prefix = {
   SORT_ID: 'sort-',
 };
 
-const ResetButtonValue = {
+const ButtonValue = {
+  SAVE: 'Save',
   DELETE: 'Delete',
   CANCEL: 'Cancel',
-}
+  SAVING: 'Saving...',
+  DELETING: 'Deleting...',
+};
 
 const descriptionFish = TEXT_FISH.split('.');
 
@@ -67,6 +70,7 @@ const MessageOfListEmpty = {
   [FilterType.FUTURE]: 'There are no future events now',
   [FilterType.PRESENT]: 'There are no present events now',
   [FilterType.PAST]: 'There are no past events now',
+  UNAVAILABLE_SERVER: 'Failed to load latest route information',
 };
 
 const SortType = {
@@ -87,7 +91,31 @@ const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  INIT: 'INIT',
 };
 
-export { descriptionFish, PICTURE_SRC, DESTINATIONS, TYPES_OF_WAYPOINT, offersToWaypoints, WAYPOINTS_COUNT, DATE_FROM_LIST, DATE_TO_LIST, DateFormat, TimeAbbreviation, NEW_POINT, FilterType, Prefix, SortType, UserAction, UpdateType, ResetButtonValue, MessageOfListEmpty };
+const Method = {
+  GET: 'GET',
+  PUT: 'PUT',
+  POST: 'POST',
+  DELETE: 'DELETE',
+};
+
+const Service = {
+  END_POINT: 'https://23.objects.htmlacademy.pro/big-trip',
+  AUTHORIZATION: 'Basic kdds45vdd79mh'
+};
+
+const EndUrl = {
+  POINTS: 'points',
+  DESTINATIONS: 'destinations',
+  OFFERS: 'offers',
+};
+
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
+
+export { descriptionFish, PICTURE_SRC, DESTINATIONS, TYPES_OF_WAYPOINT, offersToWaypoints, WAYPOINTS_COUNT, DATE_FROM_LIST, DATE_TO_LIST, DateFormat, TimeAbbreviation, NEW_POINT, FilterType, Prefix, SortType, UserAction, UpdateType, ButtonValue, MessageOfListEmpty, Method, Service, EndUrl, TimeLimit };
 

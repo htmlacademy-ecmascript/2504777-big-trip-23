@@ -4,8 +4,10 @@ import SortingView from '../view/sorting-view.js';
 import WaypointPresenter from './waypoint-presenter.js';
 import NewPointPresenter from './new-point-presenter.js';
 import ListEmptyView from '../view/list-empty-view.js';
+import LoadingView from '../view/loading-view.js';
+import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 import { sortByCurrentType } from '../utils/sort.js';
-import { SortType, UserAction, UpdateType, FilterType } from '../const.js';
+import { SortType, UserAction, UpdateType, FilterType, TimeLimit } from '../const.js';
 import { filter } from '../utils/filter.js';
 
 export default class EventPresenter {
@@ -16,18 +18,35 @@ export default class EventPresenter {
   #listEmptyComponent = null;
   #newPointPresenter = null;
   #handleNewPointClose = null;
+  #enableButton = null;
+  #disableButton = null;
 
   #currentSortType = SortType.DEFAULT;
+  #isLoading = true;
 
   #eventListComponent = new EventListView();
+  #loadingComponent = new LoadingView();
+
+  #uiBlocker = new UiBlocker({
+    lowerLimit: TimeLimit.LOWER_LIMIT,
+    upperLimit: TimeLimit.UPPER_LIMIT,
+  });
 
   #waypointPresenters = new Map();
 
-  constructor({eventContainer, waypointsModel, filtersModel, onNewPointClose}) {
+  constructor({eventContainer, waypointsModel, filtersModel, enableButton, disableButton}) {
     this.#eventContainer = eventContainer;
     this.#waypointsModel = waypointsModel;
     this.#filtersModel = filtersModel;
-    this.#handleNewPointClose = onNewPointClose;
+    this.#handleNewPointClose = () => {
+      enableButton();
+      if (!this.waypoints.length) {
+        remove(this.#eventListComponent);
+        render(this.#listEmptyComponent, this.#eventContainer);
+      }
+    };
+    this.#enableButton = enableButton;
+    this.#disableButton = disableButton;
 
     this.#waypointsModel.addObserver(this.#handleModelEvent);
     this.#filtersModel.addObserver(this.#handleModelEvent);
@@ -49,6 +68,10 @@ export default class EventPresenter {
 
   createNewPoint() {
     this.#filtersModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    if (!this.waypoints.length) {
+      remove(this.#listEmptyComponent);
+      render(this.#eventListComponent, this.#eventContainer);
+    }
     this.#newPointPresenter.init(this.#waypointsModel.destinations, this.#waypointsModel.offers);
   }
 
@@ -79,8 +102,15 @@ export default class EventPresenter {
   }
 
   #renderListEmpty() {
-    this.#listEmptyComponent = new ListEmptyView(this.#filtersModel.filter);
+    this.#listEmptyComponent = new ListEmptyView({
+      filter: this.#filtersModel.filter,
+      isUnavailableServer: this.#waypointsModel.isUnavailableServer,
+    });
     render(this.#listEmptyComponent, this.#eventContainer);
+  }
+
+  #renderLoading() {
+    render(this.#loadingComponent, this.#eventContainer);
   }
 
   #clearWaypointsList() {
@@ -91,11 +121,24 @@ export default class EventPresenter {
   }
 
   #renderEventsBoard() {
-    if (!this.waypoints.length) {
+    if (this.#waypointsModel.isUnavailableServer) {
       this.#renderListEmpty();
       return;
     }
 
+    if (this.#isLoading) {
+      this.#disableButton();
+      this.#renderLoading();
+      return;
+    }
+
+    if (!this.waypoints.length) {
+      this.#enableButton();
+      this.#renderListEmpty();
+      return;
+    }
+
+    this.#enableButton();
     this.#renderSorts();
     this.#renderWaypointsList();
   }
@@ -113,18 +156,37 @@ export default class EventPresenter {
     this.#clearWaypointsList();
   }
 
-  #handleUserAction = (actionType, updateType, update) => {
+  #handleUserAction = async (actionType, updateType, update) => {
+    this.#uiBlocker.block();
+
     switch(actionType) {
       case UserAction.UPDATE_WAYPOINT:
-        this.#waypointsModel.updateWaypoint(updateType, update);
+        this.#waypointPresenters.get(update.id).setSaving();
+        try {
+          await this.#waypointsModel.updateWaypoint(updateType, update);
+        } catch (err) {
+          this.#waypointPresenters.get(update.id).setAborting();
+        }
         break;
       case UserAction.ADD_WAYPOINT:
-        this.#waypointsModel.addWaypoint(updateType, update);
+        this.#newPointPresenter.setSaving();
+        try{
+          await this.#waypointsModel.addWaypoint(updateType, update);
+        } catch (err) {
+          this.#newPointPresenter.setAborting();
+        }
         break;
       case UserAction.DELETE_WAYPOINT:
-        this.#waypointsModel.deleteWaypoint(updateType, update);
+        this.#waypointPresenters.get(update.id).setDeleting();
+        try {
+          await this.#waypointsModel.deleteWaypoint(updateType, update);
+        } catch (err) {
+          this.#waypointPresenters.get(update.id).setAborting();
+        }
         break;
     }
+
+    this.#uiBlocker.unblock();
   };
 
   #handleModelEvent = (updateType, data) => {
@@ -138,6 +200,11 @@ export default class EventPresenter {
         break;
       case UpdateType.MAJOR:
         this.#clearEventsBoard(true);
+        this.#renderEventsBoard();
+        break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
         this.#renderEventsBoard();
         break;
     }

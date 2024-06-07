@@ -42,9 +42,14 @@ function handleNewPointClose() {
   newPointButtonComponent.element.disabled = false;
 }
 
-render(new TripInfoView(), headerMainElement, RenderPosition.AFTERBEGIN);
-render(newPointButtonComponent, headerMainElement);
-
-eventPresenter.init();
 filtersPresenter.init();
-waypointsModel.init();
+eventPresenter.init();
+waypointsModel.init()
+  .finally(() => {
+    if (waypointsModel.isUnavailableServer) {
+      return;
+    }
+    render(new TripInfoView(), headerMainElement, RenderPosition.AFTERBEGIN);
+    render(newPointButtonComponent, headerMainElement);
+  });
+

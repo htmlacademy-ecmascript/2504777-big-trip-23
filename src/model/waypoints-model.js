@@ -9,6 +9,7 @@ export default class WaypointsModel extends Observable {
   #destinations = [];
   #offers = [];
   #eventsApiService = null;
+  isUnavailableServer = false;
 
   constructor({eventsApiService}) {
     super();
@@ -31,22 +32,13 @@ export default class WaypointsModel extends Observable {
     try {
       const waypoints = await this.#eventsApiService.waypoints;
       this.#waypoints = waypoints.map(this.#adaptToClient);
+      this.#destinations = await this.#eventsApiService.destinations;
+      this.#offers = await this.#eventsApiService.offers;
     } catch(err) {
       this.#waypoints = [];
-    }
-
-    try {
-      const destinations = await this.#eventsApiService.destinations;
-      this.#destinations = destinations.map(this.#adaptToClient);
-    } catch(err) {
       this.#destinations = [];
-    }
-
-    try {
-      const offers = await this.#eventsApiService.offers;
-      this.#offers = offers.map(this.#adaptToClient);
-    } catch(err) {
       this.#offers = [];
+      this.isUnavailableServer = true;
     }
 
     this._notify(UpdateType.INIT);

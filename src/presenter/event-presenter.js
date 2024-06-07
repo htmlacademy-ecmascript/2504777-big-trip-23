@@ -5,8 +5,9 @@ import WaypointPresenter from './waypoint-presenter.js';
 import NewPointPresenter from './new-point-presenter.js';
 import ListEmptyView from '../view/list-empty-view.js';
 import LoadingView from '../view/loading-view.js';
+import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 import { sortByCurrentType } from '../utils/sort.js';
-import { SortType, UserAction, UpdateType, FilterType } from '../const.js';
+import { SortType, UserAction, UpdateType, FilterType, TimeLimit } from '../const.js';
 import { filter } from '../utils/filter.js';
 
 export default class EventPresenter {
@@ -23,6 +24,11 @@ export default class EventPresenter {
 
   #eventListComponent = new EventListView();
   #loadingComponent = new LoadingView();
+
+  #uiBlocker = new UiBlocker({
+    lowerLimit: TimeLimit.LOWER_LIMIT,
+    upperLimit: TimeLimit.UPPER_LIMIT,
+  });
 
   #waypointPresenters = new Map();
 
@@ -92,7 +98,10 @@ export default class EventPresenter {
   }
 
   #renderListEmpty() {
-    this.#listEmptyComponent = new ListEmptyView(this.#filtersModel.filter);
+    this.#listEmptyComponent = new ListEmptyView({
+      filter: this.#filtersModel.filter,
+      isUnavailableServer: this.#waypointsModel.isUnavailableServer,
+    });
     render(this.#listEmptyComponent, this.#eventContainer);
   }
 
@@ -108,6 +117,11 @@ export default class EventPresenter {
   }
 
   #renderEventsBoard() {
+    if (this.#waypointsModel.isUnavailableServer) {
+      this.#renderListEmpty();
+      return;
+    }
+
     if (this.#isLoading) {
       this.#renderLoading();
       return;
@@ -136,6 +150,8 @@ export default class EventPresenter {
   }
 
   #handleUserAction = async (actionType, updateType, update) => {
+    this.#uiBlocker.block();
+
     switch(actionType) {
       case UserAction.UPDATE_WAYPOINT:
         this.#waypointPresenters.get(update.id).setSaving();
@@ -162,6 +178,8 @@ export default class EventPresenter {
         }
         break;
     }
+
+    this.#uiBlocker.unblock();
   };
 
   #handleModelEvent = (updateType, data) => {

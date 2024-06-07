@@ -1,5 +1,5 @@
 import { render, remove, RenderPosition } from '../framework/render.js';
-import { isEscapeKey, generateId } from '../utils/common.js';
+import { isEscapeKey } from '../utils/common.js';
 import { UserAction, UpdateType } from '../const.js';
 import EditingPointView from '../view/editing-point-view.js';
 
@@ -50,6 +50,18 @@ export default class NewPointPresenter {
       isSaving: true,
       isDisabled: true,
     });
+  }
+
+  setAborting() {
+    const resetFormState = () => {
+      this.#waypointEditComponent.updateElement({
+        isSaving: false,
+        isDeleting: false,
+        isDisabled: false,
+      });
+    };
+
+    this.#waypointEditComponent.shake(resetFormState);
   }
 
   #onDocumentEscKeydown = (evt) => {

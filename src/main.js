@@ -1,4 +1,4 @@
-import TripInfoView from './view/trip-info-view.js';
+// import TripInfoView from './view/trip-info-view.js';
 import EventPresenter from './presenter/event-presenter.js';
 import WaypointsModel from './model/waypoints-model.js';
 import FiltersModel from './model/filters-model.js';
@@ -6,7 +6,7 @@ import FiltersPresenter from './presenter/filters-presenter.js';
 import TripInfoPresenter from './presenter/trip-info-presenter.js';
 import NewPointButtonView from './view/new-point-button-view.js';
 import EventsApiService from './events-api-service.js';
-import { render, RenderPosition } from './framework/render.js';
+import { render } from './framework/render.js';
 import { Service } from './const.js';
 
 const headerMainElement = document.querySelector('.trip-main');
@@ -27,13 +27,13 @@ const eventPresenter = new EventPresenter({
   disableButton,
 });
 
-const filtersPresenter = new FiltersPresenter(
+new FiltersPresenter(
   filtersContainer,
   filtersModel,
   waypointsModel,
 );
 
-const tripInfoPresenter = new TripInfoPresenter({
+new TripInfoPresenter({
   tripInfoContainer: headerMainElement,
   waypointsModel
 });
@@ -42,7 +42,6 @@ const newPointButtonComponent = new NewPointButtonView(handleNewPointButtonClick
 
 render(newPointButtonComponent, headerMainElement);
 
-filtersPresenter.init();
 eventPresenter.init();
 waypointsModel.init();
 // waypointsModel.init()

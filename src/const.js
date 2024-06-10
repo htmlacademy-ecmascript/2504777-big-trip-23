@@ -23,6 +23,7 @@ const DateFormat = {
   DAY: 'MMM DD',
   TIME: 'HH:mm',
   DATE_FOR_FLATPICKR: 'd/m/y H:i',
+  DATE_FOR_INFO: 'DD MMM',
 };
 
 const TimeAbbreviation = {
@@ -117,10 +118,10 @@ const TimeLimit = {
   UPPER_LIMIT: 1000,
 };
 
-const TripDestinationSeparator = {
+const SeparatorType = {
   DASH: '&nbsp;&mdash;&nbsp;',
   ELLIPSIS: '&nbsp;&mdash;&nbsp;&#8230;&nbsp;&mdash;&nbsp;',
 };
 
-export { descriptionFish, PICTURE_SRC, DESTINATIONS, TYPES_OF_WAYPOINT, offersToWaypoints, WAYPOINTS_COUNT, DATE_FROM_LIST, DATE_TO_LIST, DateFormat, TimeAbbreviation, NEW_POINT, FilterType, Prefix, SortType, UserAction, UpdateType, ButtonValue, MessageOfListEmpty, Method, Service, EndUrl, TimeLimit, TripDestinationSeparator };
+export { descriptionFish, PICTURE_SRC, DESTINATIONS, TYPES_OF_WAYPOINT, offersToWaypoints, WAYPOINTS_COUNT, DATE_FROM_LIST, DATE_TO_LIST, DateFormat, TimeAbbreviation, NEW_POINT, FilterType, Prefix, SortType, UserAction, UpdateType, ButtonValue, MessageOfListEmpty, Method, Service, EndUrl, TimeLimit, SeparatorType };
 

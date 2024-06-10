@@ -44,13 +44,14 @@ render(newPointButtonComponent, headerMainElement);
 
 filtersPresenter.init();
 eventPresenter.init();
-waypointsModel.init()
-  .finally(() => {
-    if (waypointsModel.isUnavailableServer) {
-      return;
-    }
-    tripInfoPresenter.init();
-  });
+waypointsModel.init();
+// waypointsModel.init()
+//   .finally(() => {
+//     if (waypointsModel.isUnavailableServer) {
+//       return;
+//     }
+//     tripInfoPresenter.init();
+//   });
 
 function handleNewPointButtonClick() {
   eventPresenter.createNewPoint();

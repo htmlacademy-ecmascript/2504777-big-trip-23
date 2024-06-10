@@ -29,6 +29,6 @@ const getTripCost = (waypoints, offers) => {
   );
   const offersPriceSum = getOffersPriceSum(waypoints, offers);
   return basePriceSum + offersPriceSum;
-}
+};
 
 export { getRouteTrip, getTripCost };

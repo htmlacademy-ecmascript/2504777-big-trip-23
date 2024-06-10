@@ -77,7 +77,6 @@ export default class NewPointPresenter {
       UpdateType.MINOR,
       update,
     );
-    // this.destroy();
   };
 
   #handleFormReset = () => {

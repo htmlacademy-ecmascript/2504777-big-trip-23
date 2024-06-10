@@ -1,9 +1,5 @@
-// import { mockWaypoints } from '../mock/waypoints.js';
 import Observable from '../framework/observable.js';
 import { UpdateType } from '../const.js';
-// import { mockDestinations } from '../mock/destination.js';
-// import { mockOffers } from '../mock/offers.js';
-
 export default class WaypointsModel extends Observable {
   #waypoints = [];
   #destinations = [];

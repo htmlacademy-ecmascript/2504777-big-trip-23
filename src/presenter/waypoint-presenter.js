@@ -150,7 +150,6 @@ export default class WaypointPresenter {
       isMinorUpdate(this.#waypoint, update) ? UpdateType.MINOR : UpdateType.PATCH,
       update,
     );
-    // this.#switchToDefaultMode();
   };
 
   #handleFormReset = () => {

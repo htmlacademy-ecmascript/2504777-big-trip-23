@@ -156,7 +156,7 @@ export default class EventPresenter {
     this.#clearWaypointsList();
   }
 
-  #handleUserAction = async (actionType, updateType, update) => {
+  #handleUserAction = async (actionType, updateType, update, onSuccess) => {
     this.#uiBlocker.block();
 
     switch(actionType) {
@@ -164,6 +164,9 @@ export default class EventPresenter {
         this.#waypointPresenters.get(update.id).setSaving();
         try {
           await this.#waypointsModel.updateWaypoint(updateType, update);
+          if(onSuccess) {
+            onSuccess();
+          }
         } catch (err) {
           this.#waypointPresenters.get(update.id).setAborting();
         }
@@ -180,6 +183,9 @@ export default class EventPresenter {
         this.#waypointPresenters.get(update.id).setDeleting();
         try {
           await this.#waypointsModel.deleteWaypoint(updateType, update);
+          if(onSuccess) {
+            onSuccess();
+          }
         } catch (err) {
           this.#waypointPresenters.get(update.id).setAborting();
         }

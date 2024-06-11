@@ -116,7 +116,6 @@ export default class WaypointPresenter {
         isDisabled: false,
       });
     };
-
     this.#waypointEditComponent.shake(resetFormState);
   }
 
@@ -128,9 +127,9 @@ export default class WaypointPresenter {
   };
 
   #switchToEditingMode() {
-    this.#handleModeChange();
     replace(this.#waypointEditComponent, this.#waypointComponent);
     document.addEventListener('keydown', this.#onDocumentEscKeydown);
+    this.#handleModeChange();
     this.#mode = Mode.EDITING;
   }
 
@@ -149,7 +148,9 @@ export default class WaypointPresenter {
       UserAction.UPDATE_WAYPOINT,
       isMinorUpdate(this.#waypoint, update) ? UpdateType.MINOR : UpdateType.PATCH,
       update,
+      () => document.removeEventListener('keydown', this.#onDocumentEscKeydown),
     );
+    // document.removeEventListener('keydown', this.#onDocumentEscKeydown);
   };
 
   #handleFormReset = () => {
@@ -157,8 +158,9 @@ export default class WaypointPresenter {
       UserAction.DELETE_WAYPOINT,
       UpdateType.MINOR,
       this.#waypoint,
+      () => document.removeEventListener('keydown', this.#onDocumentEscKeydown),
     );
-    document.removeEventListener('keydown', this.#onDocumentEscKeydown);
+    // document.removeEventListener('keydown', this.#onDocumentEscKeydown);
   };
 
   #handleFormClose = () => {

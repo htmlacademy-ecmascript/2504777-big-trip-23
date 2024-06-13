@@ -1,9 +1,7 @@
-// import dayjs from 'dayjs';
-import AbstractView from '../framework/view/abstract-view.js';
-
 import { humanizeWaypointDate, convertTime, renderDuration } from '../utils/waypoint.js';
 import { getDuration } from '../utils/common.js';
 import { DateFormat } from '../const.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 const { ATTRIBUTE_WITH_TIME, ATTRIBUTE_WITHOUT_TIME, DAY, TIME } = DateFormat;
 
@@ -62,9 +60,9 @@ const createWaypointTemplate = (waypoint, destinations, offers) => {
 };
 
 export default class WaypointView extends AbstractView {
-  #waypoint = null;
-  #destinations = null;
-  #offers = null;
+  #waypoint = [];
+  #destinations = [];
+  #offers = [];
   #handleEditClick = null;
   #handleFavoriteClick = null;
 

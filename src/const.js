@@ -1,3 +1,6 @@
+const END_POINT = 'https://23.objects.htmlacademy.pro/big-trip';
+const AUTHORIZATION = 'Basic kdds45vdd79mh';
+
 const TYPES_OF_WAYPOINT = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
 const NEW_POINT = {
@@ -52,6 +55,7 @@ const MessageOfListEmpty = {
   [FilterType.PRESENT]: 'There are no present events now',
   [FilterType.PAST]: 'There are no past events now',
   UNAVAILABLE_SERVER: 'Failed to load latest route information',
+  LOADING: 'Loading...',
 };
 
 const SortType = {
@@ -82,11 +86,6 @@ const Method = {
   DELETE: 'DELETE',
 };
 
-const Service = {
-  END_POINT: 'https://23.objects.htmlacademy.pro/big-trip',
-  AUTHORIZATION: 'Basic kdds45vdd79mh'
-};
-
 const EndUrl = {
   POINTS: 'points',
   DESTINATIONS: 'destinations',
@@ -103,5 +102,10 @@ const SeparatorType = {
   ELLIPSIS: '&nbsp;&mdash;&nbsp;&#8230;&nbsp;&mdash;&nbsp;',
 };
 
-export { TYPES_OF_WAYPOINT, DateFormat, TimeAbbreviation, NEW_POINT, FilterType, Prefix, SortType, UserAction, UpdateType, ButtonValue, MessageOfListEmpty, Method, Service, EndUrl, TimeLimit, SeparatorType };
+const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING',
+};
+
+export { TYPES_OF_WAYPOINT, DateFormat, TimeAbbreviation, NEW_POINT, FilterType, Prefix, SortType, UserAction, UpdateType, ButtonValue, MessageOfListEmpty, Method, END_POINT, AUTHORIZATION, EndUrl, TimeLimit, SeparatorType, Mode };
 

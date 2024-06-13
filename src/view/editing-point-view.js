@@ -1,9 +1,9 @@
 import he from 'he';
-import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import { TYPES_OF_WAYPOINT, DateFormat, NEW_POINT, Prefix, ButtonValue } from '../const.js';
-import { humanizeWaypointDate, formatOfferTitle, upFirstLetter } from '../utils/waypoint.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
+import { TYPES_OF_WAYPOINT, DateFormat, NEW_POINT, Prefix, ButtonValue } from '../const.js';
+import { humanizeWaypointDate, formatOfferTitle, upFirstLetter } from '../utils/waypoint.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 
 const createEditingPointTemplate = (waypoint, destinations, offers) => {
   const { type, dateFrom, dateTo, basePrice, isDeleting, isDisabled, isSaving} = waypoint;
@@ -74,15 +74,15 @@ const createEditingPointTemplate = (waypoint, destinations, offers) => {
             <input class="event__input  event__input--price" id="event-price-${waypointId}" type="text" name="event-price" value="${basePrice}" ${isDisabled ? 'disabled' : ''}>
           </div>
 
-          <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>${isSaving ? ButtonValue.SAVING : ButtonValue.SAVE}</button>
-          <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>${getResetButtonValue()}</button>
+          <button class="event__save-btn  btn  btn--blue" type="submit">${isSaving ? ButtonValue.SAVING : ButtonValue.SAVE}</button>
+          <button class="event__reset-btn" type="reset">${getResetButtonValue()}</button>
           ${waypointId ? `
           <button class="event__rollup-btn" type="button">
             <span class="visually-hidden">Open event</span>
           </button>` : '' }
         </header>
 
-        ${(!currentDestination && !offersForWaypoint.length) ? '' : `
+        ${((!currentDestination || (!currentDestination.description && !currentDestination.pictures.length)) && !offersForWaypoint.length) ? '' : `
         <section class="event__details">
 
           ${offersForWaypoint.length ? `
@@ -134,17 +134,20 @@ const createEditingPointTemplate = (waypoint, destinations, offers) => {
 export default class EditingPointView extends AbstractStatefulView {
   #destinations = [];
   #offers = [];
+
   #handleFormSubmit = null;
   #handleFormReset = null;
   #handleFormClose = null;
-  #editForm = null;
-  #inputDestination = null;
+
   #datepickerFrom = null;
   #datepickerTo = null;
+
+  #editForm = null;
+  #inputDestination = null;
   #offersSection = null;
   #rollupButton = null;
 
-  constructor({waypoint = NEW_POINT, destinations, offers, onFormSubmit, onFormReset, onFormClose }) {
+  constructor({waypoint = NEW_POINT, destinations, offers, onFormSubmit, onFormReset, onFormClose}) {
     super();
     this._setState(EditingPointView.parseWaypointToState(waypoint));
     this.#destinations = destinations;
@@ -160,16 +163,22 @@ export default class EditingPointView extends AbstractStatefulView {
     return createEditingPointTemplate(this._state, this.#destinations, this.#offers);
   }
 
-  resetElement(waypoint) {
-    this.updateElement((EditingPointView.parseWaypointToState(waypoint)));
-  }
-
   removeElement() {
     super.removeElement();
-    this.#datepickerFrom.destroy();
-    this.#datepickerTo.destroy();
-    this.#datepickerFrom = null;
-    this.#datepickerTo = null;
+
+    if (this.#datepickerFrom) {
+      this.#datepickerFrom.destroy();
+      this.#datepickerFrom = null;
+    }
+
+    if (this.#datepickerTo) {
+      this.#datepickerTo.destroy();
+      this.#datepickerTo = null;
+    }
+  }
+
+  reset(waypoint) {
+    this.updateElement((EditingPointView.parseWaypointToState(waypoint)));
   }
 
   _restoreHandlers() {

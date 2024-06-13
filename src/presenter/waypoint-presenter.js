@@ -1,14 +1,10 @@
 import { render, replace, remove } from '../framework/render';
 import { isEscapeKey } from '../utils/common.js';
 import { isMinorUpdate } from '../utils/waypoint.js';
-import { UserAction, UpdateType } from '../const.js';
+import { UserAction, UpdateType, Mode } from '../const.js';
 import EditingPointView from '../view/editing-point-view.js';
 import WaypointView from '../view/waypoint-view.js';
 
-const Mode = {
-  DEFAULT: 'DEFAULT',
-  EDITING: 'EDITING',
-};
 export default class WaypointPresenter {
   #waypointListContainer = null;
   #handleDataChange = null;
@@ -23,7 +19,7 @@ export default class WaypointPresenter {
 
   #mode = Mode.DEFAULT;
 
-  constructor(waypointListContainer, onDataChange, onModeChange) {
+  constructor({waypointListContainer, onDataChange, onModeChange}) {
     this.#waypointListContainer = waypointListContainer;
     this.#handleDataChange = onDataChange;
     this.#handleModeChange = onModeChange;
@@ -76,11 +72,12 @@ export default class WaypointPresenter {
   destroy() {
     remove(this.#waypointComponent);
     remove(this.#waypointEditComponent);
+    document.removeEventListener('keydown', this.#documentEscKeydownHandler);
   }
 
   modeReset() {
-    if (this.#mode !== 'DEFAULT') {
-      this.#waypointEditComponent.resetElement(this.#waypoint);
+    if (this.#mode !== Mode.DEFAULT) {
+      this.#waypointEditComponent.reset(this.#waypoint);
       this.#switchToDefaultMode();
     }
   }
@@ -119,23 +116,16 @@ export default class WaypointPresenter {
     this.#waypointEditComponent.shake(resetFormState);
   }
 
-  #onDocumentEscKeydown = (evt) => {
-    if (isEscapeKey(evt)) {
-      evt.preventDefault();
-      this.#handleFormClose();
-    }
-  };
-
   #switchToEditingMode() {
     replace(this.#waypointEditComponent, this.#waypointComponent);
-    document.addEventListener('keydown', this.#onDocumentEscKeydown);
+    document.addEventListener('keydown', this.#documentEscKeydownHandler);
     this.#handleModeChange();
     this.#mode = Mode.EDITING;
   }
 
   #switchToDefaultMode() {
     replace(this.#waypointComponent, this.#waypointEditComponent);
-    document.removeEventListener('keydown', this.#onDocumentEscKeydown);
+    document.removeEventListener('keydown', this.#documentEscKeydownHandler);
     this.#mode = Mode.DEFAULT;
   }
 
@@ -148,9 +138,7 @@ export default class WaypointPresenter {
       UserAction.UPDATE_WAYPOINT,
       isMinorUpdate(this.#waypoint, update) ? UpdateType.MINOR : UpdateType.PATCH,
       update,
-      () => document.removeEventListener('keydown', this.#onDocumentEscKeydown),
     );
-    // document.removeEventListener('keydown', this.#onDocumentEscKeydown);
   };
 
   #handleFormReset = () => {
@@ -158,13 +146,11 @@ export default class WaypointPresenter {
       UserAction.DELETE_WAYPOINT,
       UpdateType.MINOR,
       this.#waypoint,
-      () => document.removeEventListener('keydown', this.#onDocumentEscKeydown),
     );
-    // document.removeEventListener('keydown', this.#onDocumentEscKeydown);
   };
 
   #handleFormClose = () => {
-    this.#waypointEditComponent.resetElement(this.#waypoint);
+    this.#waypointEditComponent.reset(this.#waypoint);
     this.#switchToDefaultMode();
   };
 
@@ -174,6 +160,13 @@ export default class WaypointPresenter {
       UpdateType.PATCH,
       {...this.#waypoint, isFavorite: !this.#waypoint.isFavorite},
     );
+  };
+
+  #documentEscKeydownHandler = (evt) => {
+    if (isEscapeKey(evt)) {
+      evt.preventDefault();
+      this.#handleFormClose();
+    }
   };
 }
 

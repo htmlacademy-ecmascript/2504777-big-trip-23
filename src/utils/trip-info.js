@@ -13,9 +13,8 @@ const getRouteTrip = (waypoints, destinations) => {
   return tripDestinationList.join(DASH);
 };
 
-const getOffersPriceSum = (waypoints, offers) => {
+const getOffersPriceSum = (selectedOffers, offers) => {
   const offersList = offers.map((offer) => offer.offers).flat();
-  const selectedOffers = waypoints.map((waypoint) => waypoint.offers).flat();
   return selectedOffers
     .map((currentOffer) => offersList.find((offer) => offer.id === currentOffer))
     .map((offer) => offer.price)
@@ -27,7 +26,8 @@ const getTripCost = (waypoints, offers) => {
     (accumulator, currentValue) => accumulator + currentValue.basePrice,
     0,
   );
-  const offersPriceSum = getOffersPriceSum(waypoints, offers);
+  const selectedOffers = waypoints.map((waypoint) => waypoint.offers).flat();
+  const offersPriceSum = selectedOffers.length ? getOffersPriceSum(selectedOffers, offers) : 0;
   return basePriceSum + offersPriceSum;
 };
 

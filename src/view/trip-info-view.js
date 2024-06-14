@@ -1,6 +1,6 @@
-import AbstractView from '../framework/view/abstract-view.js';
 import { humanizeWaypointDate } from '../utils/waypoint.js';
 import { DateFormat, SeparatorType} from '../const.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 function createTripInfoTemplate(routeTrip, waypoints, tripCost) {
   return (

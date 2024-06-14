@@ -32,7 +32,7 @@ export default class NewPointPresenter {
     });
 
     render(this.#waypointEditComponent, this.#waypointListContainer.element, RenderPosition.AFTERBEGIN);
-    document.addEventListener('keydown', this.#onDocumentEscKeydown);
+    document.addEventListener('keydown', this.#documentEscKeydownHandler);
   }
 
   destroy() {
@@ -41,7 +41,7 @@ export default class NewPointPresenter {
     }
     remove(this.#waypointEditComponent);
     this.#waypointEditComponent = null;
-    document.removeEventListener('keydown', this.#onDocumentEscKeydown);
+    document.removeEventListener('keydown', this.#documentEscKeydownHandler);
     this.#handleNewPointClose();
   }
 
@@ -64,13 +64,6 @@ export default class NewPointPresenter {
     this.#waypointEditComponent.shake(resetFormState);
   }
 
-  #onDocumentEscKeydown = (evt) => {
-    if (isEscapeKey(evt)) {
-      evt.preventDefault();
-      this.#handleFormClose();
-    }
-  };
-
   #handleFormSubmit = (update) => {
     this.#handleDataChange(
       UserAction.ADD_WAYPOINT,
@@ -85,6 +78,13 @@ export default class NewPointPresenter {
 
   #handleFormClose = () => {
     this.destroy();
+  };
+
+  #documentEscKeydownHandler = (evt) => {
+    if (isEscapeKey(evt)) {
+      evt.preventDefault();
+      this.#handleFormClose();
+    }
   };
 }
 

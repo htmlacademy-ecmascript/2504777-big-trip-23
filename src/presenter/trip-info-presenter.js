@@ -1,6 +1,8 @@
-import TripInfoView from '../view/trip-info-view';
 import { render, replace, remove, RenderPosition } from '../framework/render.js';
 import { getRouteTrip, getTripCost } from '../utils/trip-info.js';
+import { sortByCurrentType } from '../utils/sort.js';
+import { SortType } from '../const.js';
+import TripInfoView from '../view/trip-info-view';
 
 export default class TripInfoPresenter {
   #tripInfoContainer = null;
@@ -18,8 +20,7 @@ export default class TripInfoPresenter {
   }
 
   init() {
-    this.#waypoints = this.#waypointsModel.waypoints;
-
+    this.#waypoints = sortByCurrentType(SortType.DEFAULT, this.#waypointsModel.waypoints);
     this.#routeTrip = getRouteTrip(this.#waypoints, this.#waypointsModel.destinations);
     this.#tripCost = getTripCost(this.#waypoints, this.#waypointsModel.offers);
 
@@ -40,7 +41,10 @@ export default class TripInfoPresenter {
     remove(prevTripInfoComponent);
   }
 
-  #handleModelEvent = () => {
-    this.init();
-  };
+  #destroy() {
+    remove(this.#tripInfoComponent);
+    this.#tripInfoComponent = null;
+  }
+
+  #handleModelEvent = () => (this.#waypointsModel.waypoints.length === 0 || this.#waypointsModel.isUnavailableServer) ? this.#destroy() : this.init();
 }

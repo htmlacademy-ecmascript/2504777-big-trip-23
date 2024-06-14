@@ -37,6 +37,6 @@ const upFirstLetter = (word) => word.charAt(0).toUpperCase() + word.slice(1);
 
 const isDatesEqual = (dateA, dateB) => dayjs(dateA).isSame(dateB, 'm');
 
-const isMinorUpdate = (data, updata) => !isDatesEqual(data.dateFrom, updata.dateFrom) || !isDatesEqual(data.dateTo, updata.dateTo) || data.basePrice !== updata.basePrise;
+const isMinorUpdate = (data, updata) => !isDatesEqual(data.dateFrom, updata.dateFrom) || !isDatesEqual(data.dateTo, updata.dateTo) || data.basePrice !== updata.basePrice;
 
 export { humanizeWaypointDate, convertTime, renderDuration, formatOfferTitle, upFirstLetter, isMinorUpdate };

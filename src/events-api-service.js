@@ -1,7 +1,7 @@
 import ApiService from './framework/api-service';
 import { Method, EndUrl } from './const';
 
-const { POINTS, DESTINATIONS, OFFERS} = EndUrl;
+const { POINTS, DESTINATIONS, OFFERS } = EndUrl;
 
 export default class EventsApiService extends ApiService {
   get waypoints() {

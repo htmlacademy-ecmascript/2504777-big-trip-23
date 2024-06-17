@@ -163,6 +163,10 @@ export default class EditingPointView extends AbstractStatefulView {
     return createEditingPointTemplate(this._state, this.#destinations, this.#offers);
   }
 
+  get isExisted() {
+    return Boolean(this.element.parentElement);
+  }
+
   removeElement() {
     super.removeElement();
 

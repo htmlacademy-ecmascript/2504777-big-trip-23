@@ -1,15 +1,23 @@
-import { SeparatorType } from '../const.js';
+import { SeparatorType, TripInfoViewType } from '../const.js';
 
 const {DASH, ELLIPSIS} = SeparatorType;
+const {COUNT_FOR_DASH_JOINT, COUNT_FOR_ELIPSIS_JOINT} = TripInfoViewType;
 
 const getRouteTrip = (waypoints, destinations) => {
   const tripDestinationList = waypoints
     .map((waypoint) => destinations.find((destination) => destination.id === waypoint.destination))
     .map((destination) => destination.name);
 
-  if (tripDestinationList.length === 1 || tripDestinationList.length > 3) {
-    return `${tripDestinationList[0]}${tripDestinationList.length === 1 ? DASH : ELLIPSIS}${tripDestinationList.at(-1)}`;
+  const startPoint = tripDestinationList[0];
+  const endPoint = tripDestinationList.at(-1);
+
+  if (tripDestinationList.length <= COUNT_FOR_DASH_JOINT) {
+    return `${startPoint}${DASH}${endPoint}`;
   }
+  if (tripDestinationList.length >= COUNT_FOR_ELIPSIS_JOINT) {
+    return `${startPoint}${ELLIPSIS}${endPoint}`;
+  }
+
   return tripDestinationList.join(DASH);
 };
 

@@ -178,7 +178,9 @@ export default class EditingPointView extends AbstractStatefulView {
   }
 
   reset(waypoint) {
-    this.updateElement((EditingPointView.parseWaypointToState(waypoint)));
+    this.updateElement(
+      EditingPointView.parseWaypointToState(waypoint),
+    );
   }
 
   _restoreHandlers() {

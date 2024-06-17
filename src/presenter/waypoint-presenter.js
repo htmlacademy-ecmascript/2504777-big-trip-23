@@ -163,10 +163,12 @@ export default class WaypointPresenter {
   };
 
   #documentEscKeydownHandler = (evt) => {
-    if (isEscapeKey(evt)) {
-      evt.preventDefault();
-      this.#handleFormClose();
-    }
+    setTimeout(() => {
+      if (isEscapeKey(evt) && !evt.defaultPrevented) {
+        evt.preventDefault();
+        this.#handleFormClose();
+      }
+    }, 0);
   };
 }
 

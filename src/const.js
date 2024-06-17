@@ -93,7 +93,7 @@ const EndUrl = {
 };
 
 const TimeLimit = {
-  LOWER_LIMIT: 0,
+  LOWER_LIMIT: 350,
   UPPER_LIMIT: 1000,
 };
 

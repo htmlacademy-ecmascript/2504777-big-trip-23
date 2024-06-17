@@ -107,12 +107,15 @@ export default class WaypointPresenter {
     }
 
     const resetFormState = () => {
-      this.#waypointEditComponent.updateElement({
-        isSaving: false,
-        isDeleting: false,
-        isDisabled: false,
-      });
+      if (this.#waypointEditComponent.isExisted) {
+        this.#waypointEditComponent.updateElement({
+          isSaving: false,
+          isDeleting: false,
+          isDisabled: false,
+        });
+      }
     };
+
     this.#waypointEditComponent.shake(resetFormState);
   }
 
@@ -163,12 +166,10 @@ export default class WaypointPresenter {
   };
 
   #documentEscKeydownHandler = (evt) => {
-    setTimeout(() => {
-      if (isEscapeKey(evt) && !evt.defaultPrevented) {
-        evt.preventDefault();
-        this.#handleFormClose();
-      }
-    }, 0);
+    if (isEscapeKey(evt)) {
+      evt.preventDefault();
+      this.#handleFormClose();
+    }
   };
 }
 

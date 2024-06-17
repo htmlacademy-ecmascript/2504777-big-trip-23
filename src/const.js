@@ -93,7 +93,7 @@ const EndUrl = {
 };
 
 const TimeLimit = {
-  LOWER_LIMIT: 350,
+  LOWER_LIMIT: 0,
   UPPER_LIMIT: 1000,
 };
 
@@ -107,5 +107,16 @@ const Mode = {
   EDITING: 'EDITING',
 };
 
-export { TYPES_OF_WAYPOINT, DateFormat, TimeAbbreviation, NEW_POINT, FilterType, Prefix, SortType, UserAction, UpdateType, ButtonValue, MessageOfListEmpty, Method, END_POINT, AUTHORIZATION, EndUrl, TimeLimit, SeparatorType, Mode };
+const TripInfoViewType = {
+  COUNT_FOR_DASH_JOINT: 2,
+  COUNT_FOR_ELIPSIS_JOINT: 4,
+};
+
+const TimeUnit = {
+  MILLISECONDS_PER_SECOND: 1000,
+  MINUTES_PER_HOUR: 60,
+  HOURS_PER_DAY: 24,
+};
+
+export { TYPES_OF_WAYPOINT, DateFormat, TimeAbbreviation, NEW_POINT, FilterType, Prefix, SortType, UserAction, UpdateType, ButtonValue, MessageOfListEmpty, Method, END_POINT, AUTHORIZATION, EndUrl, TimeLimit, SeparatorType, Mode, TripInfoViewType, TimeUnit };
 

@@ -198,21 +198,21 @@ export default class EditingPointView extends AbstractStatefulView {
     this.#editForm
       .addEventListener('reset', this.#formResetHandler);
     this.element.querySelector('.event__type-group')
-      .addEventListener('change', this.#eventTypeChangeHandler);
+      .addEventListener('change', this.#inputTypeChangeHandler);
     this.#inputDestination
-      .addEventListener('input', this.#eventDestinationChangeHandler);
+      .addEventListener('input', this.#inputDestinationChangeHandler);
     this.#inputDestination
-      .addEventListener('blur', this.#eventDestinationBlurHandler);
+      .addEventListener('blur', this.#inputDestinationBlurHandler);
     this.element.querySelector('.event__input--price')
-      .addEventListener('change', this.#eventPriceChangeHandler);
+      .addEventListener('change', this.#inputPriceChangeHandler);
 
     if (this.#rollupButton) {
-      this.#rollupButton.addEventListener('click', this.#formClosureHandler);
+      this.#rollupButton.addEventListener('click', this.#rollupButtonClickHandler);
     }
 
     if (this.#offersSection) {
       this.#offersSection
-        .addEventListener('change', this.#eventOfferChangeHandler);
+        .addEventListener('change', this.#inputOfferChangeHandler);
     }
 
     this.#setDateFromPicker();
@@ -228,7 +228,7 @@ export default class EditingPointView extends AbstractStatefulView {
         'time_24hr': true,
         defaultDate: this._state.dateFrom,
         maxDate: this._state.dateTo,
-        onChange: this.#eventDateFromChangeHandler,
+        onChange: this.#inputDateFromChangeHandler,
       }
     );
   }
@@ -242,7 +242,7 @@ export default class EditingPointView extends AbstractStatefulView {
         'time_24hr': true,
         defaultDate: this._state.dateTo,
         minDate: this._state.dateFrom,
-        onChange: this.#eventDateToChangeHandler,
+        onChange: this.#inputDateToChangeHandler,
       }
     );
   }
@@ -257,12 +257,12 @@ export default class EditingPointView extends AbstractStatefulView {
     this.#handleFormReset();
   };
 
-  #formClosureHandler = (evt) => {
+  #rollupButtonClickHandler = (evt) => {
     evt.preventDefault();
     this.#handleFormClose();
   };
 
-  #eventTypeChangeHandler = (evt) => {
+  #inputTypeChangeHandler = (evt) => {
     evt.preventDefault();
     this.updateElement({
       type: evt.target.value,
@@ -270,14 +270,14 @@ export default class EditingPointView extends AbstractStatefulView {
     });
   };
 
-  #eventDestinationChangeHandler = (evt) => {
+  #inputDestinationChangeHandler = (evt) => {
     const usersDestination = this.#destinations.find((destination) => destination.name === evt.target.value);
     if (usersDestination) {
       this.updateElement({destination: usersDestination.id});
     }
   };
 
-  #eventDestinationBlurHandler = (evt) => {
+  #inputDestinationBlurHandler = (evt) => {
     const usersDestination = this.#destinations.find((destination) => destination.name === evt.target.value);
     if (!usersDestination) {
       const currentDestination = this.#destinations.find((destination) => destination.id === this._state.destination);
@@ -285,7 +285,7 @@ export default class EditingPointView extends AbstractStatefulView {
     }
   };
 
-  #eventOfferChangeHandler = (evt) => {
+  #inputOfferChangeHandler = (evt) => {
     const waypointId = this._state.id || 0;
     const offerId = evt.target.id.replace(Prefix.OFFER_ID, '').replace(`-${waypointId}`, '');
     const chooseOffers = [...this._state.offers];
@@ -297,7 +297,7 @@ export default class EditingPointView extends AbstractStatefulView {
     }
   };
 
-  #eventPriceChangeHandler = (evt) => {
+  #inputPriceChangeHandler = (evt) => {
     evt.preventDefault();
     const newPrice = Number(evt.target.value);
 
@@ -309,14 +309,14 @@ export default class EditingPointView extends AbstractStatefulView {
     }
   };
 
-  #eventDateFromChangeHandler = ([userDate]) => {
+  #inputDateFromChangeHandler = ([userDate]) => {
     this._setState({
       dateFrom: userDate,
     });
     this.#datepickerTo.set('minDate', userDate);
   };
 
-  #eventDateToChangeHandler = ([userDate]) => {
+  #inputDateToChangeHandler = ([userDate]) => {
     this._setState({
       dateTo: userDate,
     });
